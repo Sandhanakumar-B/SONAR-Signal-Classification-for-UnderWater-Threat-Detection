@@ -22,14 +22,19 @@ This project implements an end-to-end Machine Learning pipeline that:
 ```text
 sonar-threat-detection/
 │
-├── data/               # Raw and processed datasets (UCI Sonar data)
+├── data/
+│   ├── .gitkeep
+│   └── sonar.csv       # Raw UCI Sonar dataset (208 instances x 60 features + 1 label)
 ├── notebooks/          # Jupyter notebooks for interactive EDA and experiments
-├── src/                # Modular Python source code (data loader, preprocessor, models)
+├── src/                # Modular Python source code
+│   ├── __init__.py
+│   └── data_loader.py  # Data ingestion and preliminary exploration module
 ├── models/             # Serialized trained model files (.pkl / .joblib)
 ├── results/            # Evaluation metrics, confusion matrices, and plots
 ├── .gitignore          # Files and folders to exclude from version control
 ├── README.md           # Project documentation and daily tracking
 ├── requirements.txt    # Project dependencies and libraries
+├── load_data.py        # Day 2 dataset loading execution script
 └── test_environment.py # Environment and dependency verification script
 ```
 
@@ -70,10 +75,18 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Verify the Environment
+### 4. Verify the Environment (Day 1)
 Run the environment verification test script:
 ```bash
 python test_environment.py
+```
+
+### 5. Load and Inspect Dataset (Day 2)
+Run the dataset loading script:
+```bash
+python load_data.py
+# or run the modular component directly:
+python src/data_loader.py
 ```
 
 ---
@@ -83,7 +96,8 @@ python test_environment.py
 | Day | Milestone / Task | Status |
 | :--- | :--- | :--- |
 | **Day 1** | Project setup, folder architecture, dependency configuration, and environment verification | Completed ✅ |
-| **Day 2** | Dataset acquisition & preliminary data loading | Upcoming ⏳ |
+| **Day 2** | Dataset acquisition & preliminary data loading (Pandas loading, inspection, class distribution) | Completed ✅ |
+| **Day 3** | Exploratory Data Analysis (EDA) & Feature Correlation Analysis | Upcoming ⏳ |
 
 ---
 
