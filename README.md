@@ -24,18 +24,25 @@ sonar-threat-detection/
 │
 ├── data/
 │   ├── .gitkeep
-│   └── sonar.csv       # Raw UCI Sonar dataset (208 instances x 60 features + 1 label)
-├── notebooks/          # Jupyter notebooks for interactive EDA and experiments
-├── src/                # Modular Python source code
+│   └── sonar.csv                  # Raw UCI Sonar dataset (208 instances x 60 features + 1 label)
+├── notebooks/                     # Jupyter notebooks for interactive EDA and experiments
+├── src/                           # Modular Python source code
 │   ├── __init__.py
-│   └── data_loader.py  # Data ingestion and preliminary exploration module
-├── models/             # Serialized trained model files (.pkl / .joblib)
-├── results/            # Evaluation metrics, confusion matrices, and plots
-├── .gitignore          # Files and folders to exclude from version control
-├── README.md           # Project documentation and daily tracking
-├── requirements.txt    # Project dependencies and libraries
-├── load_data.py        # Day 2 dataset loading execution script
-└── test_environment.py # Environment and dependency verification script
+│   ├── data_loader.py             # Data ingestion and preliminary exploration module
+│   └── eda.py                     # Exploratory data analysis and visualization pipeline
+├── models/                        # Serialized trained model files (.pkl / .joblib)
+├── results/                       # Evaluation metrics, confusion matrices, and saved plots
+│   ├── class_distribution.png     # Class distribution bar chart (Mines vs Rocks)
+│   ├── mean_spectral_signature.png# Mean energy spectral profile across 60 frequency bands
+│   ├── feature_distributions.png  # Histograms and KDEs for representative frequency bands
+│   ├── feature_boxplots.png       # Boxplots comparing class separations on key features
+│   └── correlation_heatmap.png    # Correlation matrix heatmap of acoustic frequencies
+├── .gitignore                     # Files and folders to exclude from version control
+├── README.md                      # Project documentation and daily tracking
+├── requirements.txt               # Project dependencies and libraries
+├── test_environment.py            # Environment and dependency verification script
+├── load_data.py                   # Day 2 dataset loading execution script
+└── eda.py                         # Day 3 exploratory data analysis execution script
 ```
 
 ---
@@ -89,6 +96,13 @@ python load_data.py
 python src/data_loader.py
 ```
 
+### 6. Exploratory Data Analysis & Visualizations (Day 3)
+Run the comprehensive EDA workflow and generate plots:
+```bash
+python eda.py
+```
+Generated plots will be saved into the [`results/`](results/) folder.
+
 ---
 
 ## 📅 Daily Progress Tracker
@@ -97,7 +111,8 @@ python src/data_loader.py
 | :--- | :--- | :--- |
 | **Day 1** | Project setup, folder architecture, dependency configuration, and environment verification | Completed ✅ |
 | **Day 2** | Dataset acquisition & preliminary data loading (Pandas loading, inspection, class distribution) | Completed ✅ |
-| **Day 3** | Exploratory Data Analysis (EDA) & Feature Correlation Analysis | Upcoming ⏳ |
+| **Day 3** | Exploratory Data Analysis (EDA), Statistical Analysis & Visualizations | Completed ✅ |
+| **Day 4** | Data Preprocessing, Feature Scaling & Train-Test Splitting | Upcoming ⏳ |
 
 ---
 
