@@ -24,13 +24,22 @@ sonar-threat-detection/
 │
 ├── data/
 │   ├── .gitkeep
-│   └── sonar.csv                  # Raw UCI Sonar dataset (208 instances x 60 features + 1 label)
+│   ├── sonar.csv                  # Raw UCI Sonar dataset (208 instances x 60 features + 1 label)
+│   └── processed/                 # Day 4 preprocessed & scaled datasets
+│       ├── X_train.csv            # Standardized training features (166 x 60)
+│       ├── X_test.csv             # Standardized testing features (42 x 60)
+│       ├── y_train.csv            # Encoded training labels (166 x 1: M->1, R->0)
+│       ├── y_test.csv             # Encoded testing labels (42 x 1: M->1, R->0)
+│       └── preprocessing_metadata.json # Split ratios, scaling stats, and class balance log
 ├── notebooks/                     # Jupyter notebooks for interactive EDA and experiments
 ├── src/                           # Modular Python source code
 │   ├── __init__.py
 │   ├── data_loader.py             # Data ingestion and preliminary exploration module
-│   └── eda.py                     # Exploratory data analysis and visualization pipeline
-├── models/                        # Serialized trained model files (.pkl / .joblib)
+│   ├── eda.py                     # Exploratory data analysis and visualization pipeline
+│   └── preprocessor.py            # Day 4 preprocessing, feature scaling & splitting pipeline
+├── models/                        # Serialized models and transformers
+│   ├── .gitkeep
+│   └── scaler.joblib              # Fitted StandardScaler (leakage-free, fit strictly on train)
 ├── results/                       # Evaluation metrics, confusion matrices, and saved plots
 │   ├── class_distribution.png     # Class distribution bar chart (Mines vs Rocks)
 │   ├── mean_spectral_signature.png# Mean energy spectral profile across 60 frequency bands
@@ -42,7 +51,8 @@ sonar-threat-detection/
 ├── requirements.txt               # Project dependencies and libraries
 ├── test_environment.py            # Environment and dependency verification script
 ├── load_data.py                   # Day 2 dataset loading execution script
-└── eda.py                         # Day 3 exploratory data analysis execution script
+├── eda.py                         # Day 3 exploratory data analysis execution script
+└── preprocess.py                  # Day 4 preprocessing and feature scaling execution script
 ```
 
 ---
@@ -54,6 +64,7 @@ sonar-threat-detection/
 - **Data Manipulation:** Pandas
 - **Data Visualization:** Matplotlib, Seaborn
 - **Machine Learning:** Scikit-Learn
+- **Model / Transformer Persistence:** Joblib
 - **Version Control:** Git & GitHub
 
 ---
@@ -103,6 +114,13 @@ python eda.py
 ```
 Generated plots will be saved into the [`results/`](results/) folder.
 
+### 7. Data Preprocessing, Feature Scaling & Train-Test Splitting (Day 4)
+Run the preprocessing and feature scaling pipeline:
+```bash
+python preprocess.py
+```
+Preprocessed datasets are saved to [`data/processed/`](data/processed/) and the fitted scaler is saved to [`models/scaler.joblib`](models/scaler.joblib).
+
 ---
 
 ## 📅 Daily Progress Tracker
@@ -112,7 +130,8 @@ Generated plots will be saved into the [`results/`](results/) folder.
 | **Day 1** | Project setup, folder architecture, dependency configuration, and environment verification | Completed ✅ |
 | **Day 2** | Dataset acquisition & preliminary data loading (Pandas loading, inspection, class distribution) | Completed ✅ |
 | **Day 3** | Exploratory Data Analysis (EDA), Statistical Analysis & Visualizations | Completed ✅ |
-| **Day 4** | Data Preprocessing, Feature Scaling & Train-Test Splitting | Upcoming ⏳ |
+| **Day 4** | Data Preprocessing, Feature Scaling & Train-Test Splitting (Stratified 80/20, StandardScaler, Data Leakage Prevention) | Completed ✅ |
+| **Day 5** | Supervised Model Training & Cross-Validation (Logistic Regression, KNN, SVM, Random Forest) | Upcoming ⏳ |
 
 ---
 

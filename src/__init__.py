@@ -14,6 +14,15 @@ from .eda import (
     generate_and_save_visualizations,
     run_full_eda,
 )
+from .preprocessor import (
+    encode_labels,
+    split_sonar_data,
+    scale_sonar_features,
+    save_preprocessed_artifacts,
+    load_preprocessed_artifacts,
+    SonarPreprocessor,
+    run_full_preprocessing,
+)
 
 __all__ = [
     "load_sonar_data",
@@ -26,5 +35,13 @@ __all__ = [
     "get_features_and_target",
     "generate_and_save_visualizations",
     "run_full_eda",
+    "encode_labels",
+    "split_sonar_data",
+    "scale_sonar_features",
+    "save_preprocessed_artifacts",
+    "load_preprocessed_artifacts",
+    "SonarPreprocessor",
+    "run_full_preprocessing",
 ]
+
 
