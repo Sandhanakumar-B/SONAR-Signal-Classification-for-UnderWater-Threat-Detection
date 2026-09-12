@@ -23,6 +23,17 @@ from .preprocessor import (
     SonarPreprocessor,
     run_full_preprocessing,
 )
+from .model_trainer import (
+    get_default_models,
+    evaluate_model_cv,
+    evaluate_model_test,
+    train_and_evaluate_all_models,
+    generate_and_save_model_plots,
+    save_evaluation_metrics,
+    save_trained_models,
+    SonarModelTrainer,
+    run_full_training,
+)
 
 __all__ = [
     "load_sonar_data",
@@ -42,6 +53,15 @@ __all__ = [
     "load_preprocessed_artifacts",
     "SonarPreprocessor",
     "run_full_preprocessing",
+    "get_default_models",
+    "evaluate_model_cv",
+    "evaluate_model_test",
+    "train_and_evaluate_all_models",
+    "generate_and_save_model_plots",
+    "save_evaluation_metrics",
+    "save_trained_models",
+    "SonarModelTrainer",
+    "run_full_training",
 ]
 
 

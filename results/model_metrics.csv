@@ -1,0 +1,5 @@
+Model,CV_Accuracy_Mean,CV_Accuracy_Std,CV_F1_Mean,CV_ROC_AUC_Mean,Test_Accuracy,Test_Precision,Test_Recall,Test_F1_Score,Test_ROC_AUC,True_Positives (TP),False_Negatives (FN),True_Negatives (TN),False_Positives (FP),Is_Champion
+Logistic Regression,0.7895,0.0406,0.8052,0.857,0.8333,0.8261,0.8636,0.8444,0.9045,19,3,16,4,False
+K-Nearest Neighbors,0.7647,0.0598,0.7961,0.8897,0.7857,0.76,0.8636,0.8085,0.95,19,3,14,6,False
+Support Vector Machine,0.8077,0.0789,0.8312,0.9041,0.9286,0.88,1.0,0.9362,0.9727,22,0,17,3,True
+Random Forest,0.7654,0.06,0.7918,0.9129,0.8095,0.7917,0.8636,0.8261,0.9386,19,3,15,5,False

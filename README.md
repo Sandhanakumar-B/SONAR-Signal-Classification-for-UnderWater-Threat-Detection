@@ -36,23 +36,35 @@ sonar-threat-detection/
 │   ├── __init__.py
 │   ├── data_loader.py             # Data ingestion and preliminary exploration module
 │   ├── eda.py                     # Exploratory data analysis and visualization pipeline
-│   └── preprocessor.py            # Day 4 preprocessing, feature scaling & splitting pipeline
+│   ├── preprocessor.py            # Day 4 preprocessing, feature scaling & splitting pipeline
+│   └── model_trainer.py           # Day 5 model training, cross-validation & evaluation module
 ├── models/                        # Serialized models and transformers
 │   ├── .gitkeep
-│   └── scaler.joblib              # Fitted StandardScaler (leakage-free, fit strictly on train)
+│   ├── scaler.joblib              # Fitted StandardScaler (leakage-free, fit strictly on train)
+│   ├── logistic_regression.joblib # Trained Logistic Regression classifier
+│   ├── knn.joblib                 # Trained K-Nearest Neighbors classifier
+│   ├── svm.joblib                 # Trained Support Vector Machine classifier
+│   ├── random_forest.joblib       # Trained Random Forest classifier
+│   └── best_model.joblib          # Champion model (SVM with 92.86% accuracy & 100% threat recall)
 ├── results/                       # Evaluation metrics, confusion matrices, and saved plots
 │   ├── class_distribution.png     # Class distribution bar chart (Mines vs Rocks)
 │   ├── mean_spectral_signature.png# Mean energy spectral profile across 60 frequency bands
 │   ├── feature_distributions.png  # Histograms and KDEs for representative frequency bands
 │   ├── feature_boxplots.png       # Boxplots comparing class separations on key features
-│   └── correlation_heatmap.png    # Correlation matrix heatmap of acoustic frequencies
+│   ├── correlation_heatmap.png    # Correlation matrix heatmap of acoustic frequencies
+│   ├── model_comparison.png       # Day 5 performance comparison bar chart across models
+│   ├── confusion_matrices.png     # Day 5 2x2 confusion matrix grid on test set
+│   ├── roc_curves.png             # Day 5 ROC curves and AUC comparison
+│   ├── model_metrics.csv          # Day 5 comparative metrics spreadsheet
+│   └── model_evaluation_metrics.json # Day 5 structured metrics and classification reports
 ├── .gitignore                     # Files and folders to exclude from version control
 ├── README.md                      # Project documentation and daily tracking
 ├── requirements.txt               # Project dependencies and libraries
 ├── test_environment.py            # Environment and dependency verification script
 ├── load_data.py                   # Day 2 dataset loading execution script
 ├── eda.py                         # Day 3 exploratory data analysis execution script
-└── preprocess.py                  # Day 4 preprocessing and feature scaling execution script
+├── preprocess.py                  # Day 4 preprocessing and feature scaling execution script
+└── train.py                       # Day 5 model training and cross-validation execution script
 ```
 
 ---
@@ -121,6 +133,22 @@ python preprocess.py
 ```
 Preprocessed datasets are saved to [`data/processed/`](data/processed/) and the fitted scaler is saved to [`models/scaler.joblib`](models/scaler.joblib).
 
+### 8. Supervised Model Training & Cross-Validation (Day 5)
+Run the supervised model training, cross-validation, and evaluation pipeline:
+```bash
+python train.py
+```
+
+#### Day 5 Benchmark Performance Summary (Test Set):
+| Model | 5-Fold CV Acc (± Std) | Test Accuracy | Precision | Threat Recall | F1-Score | ROC-AUC | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Support Vector Machine (SVM)** | **80.77% (± 7.89%)** | **92.86%** | **88.00%** | **100.00%** | **0.9362** | **0.9727** | **Champion 🏆** |
+| **Logistic Regression** | 78.95% (± 4.06%) | 83.33% | 82.61% | 86.36% | 0.8444 | 0.9045 | Baseline |
+| **Random Forest** | 76.54% (± 6.00%) | 80.95% | 79.17% | 86.36% | 0.8261 | 0.9386 | Ensemble |
+| **K-Nearest Neighbors (KNN)** | 76.47% (± 5.98%) | 78.57% | 76.00% | 86.36% | 0.8085 | 0.9500 | Non-parametric |
+
+All trained models are saved to [`models/`](models/) and comparative visualization figures (`model_comparison.png`, `confusion_matrices.png`, `roc_curves.png`) are saved to [`results/`](results/).
+
 ---
 
 ## 📅 Daily Progress Tracker
@@ -131,7 +159,8 @@ Preprocessed datasets are saved to [`data/processed/`](data/processed/) and the 
 | **Day 2** | Dataset acquisition & preliminary data loading (Pandas loading, inspection, class distribution) | Completed ✅ |
 | **Day 3** | Exploratory Data Analysis (EDA), Statistical Analysis & Visualizations | Completed ✅ |
 | **Day 4** | Data Preprocessing, Feature Scaling & Train-Test Splitting (Stratified 80/20, StandardScaler, Data Leakage Prevention) | Completed ✅ |
-| **Day 5** | Supervised Model Training & Cross-Validation (Logistic Regression, KNN, SVM, Random Forest) | Upcoming ⏳ |
+| **Day 5** | Supervised Model Training & Cross-Validation (Logistic Regression, KNN, SVM, Random Forest) | Completed ✅ |
+| **Day 6** | Hyperparameter Tuning, Threshold Optimization & Comprehensive Model Diagnostics | Upcoming ⏳ |
 
 ---
 
