@@ -1,0 +1,5 @@
+Model,Best_Parameters,CV_Best_F1,Test_Accuracy,Test_Recall,Test_Precision,Test_F1_Score,Test_ROC_AUC,Delta_F1_vs_Baseline,Delta_Accuracy_vs_Baseline,Is_Champion
+Support Vector Machine,"{'C': 1.0, 'gamma': 'scale', 'kernel': 'rbf'}",0.8312,0.9286,1.0,0.88,0.9362,0.9727,0.0,0.0,True
+Random Forest,"{'max_depth': None, 'max_features': 'log2', 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 200}",0.8324,0.8571,0.9545,0.8077,0.875,0.9227,0.0489,0.0476,False
+K-Nearest Neighbors,"{'metric': 'manhattan', 'n_neighbors': 4, 'weights': 'distance'}",0.8509,0.8571,0.9545,0.8077,0.875,0.9705,0.0665,0.0714,False
+Logistic Regression,"{'C': 0.05, 'solver': 'lbfgs'}",0.842,0.7857,0.7727,0.8095,0.7907,0.8841,-0.0537,-0.0476,False

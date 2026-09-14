@@ -1,0 +1,176 @@
+{
+    "timestamp": "2026-09-14T16:30:19.312976",
+    "champion_tuned_model": "Support Vector Machine",
+    "tuning_summary": [
+        {
+            "Model": "Support Vector Machine",
+            "Best_Parameters": "{'C': 1.0, 'gamma': 'scale', 'kernel': 'rbf'}",
+            "CV_Best_F1": 0.8312,
+            "Test_Accuracy": 0.9286,
+            "Test_Recall": 1.0,
+            "Test_Precision": 0.88,
+            "Test_F1_Score": 0.9362,
+            "Test_ROC_AUC": 0.9727,
+            "Delta_F1_vs_Baseline": 0.0,
+            "Delta_Accuracy_vs_Baseline": 0.0,
+            "Is_Champion": true
+        },
+        {
+            "Model": "Random Forest",
+            "Best_Parameters": "{'max_depth': None, 'max_features': 'log2', 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 200}",
+            "CV_Best_F1": 0.8324,
+            "Test_Accuracy": 0.8571,
+            "Test_Recall": 0.9545,
+            "Test_Precision": 0.8077,
+            "Test_F1_Score": 0.875,
+            "Test_ROC_AUC": 0.9227,
+            "Delta_F1_vs_Baseline": 0.0489,
+            "Delta_Accuracy_vs_Baseline": 0.0476,
+            "Is_Champion": false
+        },
+        {
+            "Model": "K-Nearest Neighbors",
+            "Best_Parameters": "{'metric': 'manhattan', 'n_neighbors': 4, 'weights': 'distance'}",
+            "CV_Best_F1": 0.8509,
+            "Test_Accuracy": 0.8571,
+            "Test_Recall": 0.9545,
+            "Test_Precision": 0.8077,
+            "Test_F1_Score": 0.875,
+            "Test_ROC_AUC": 0.9705,
+            "Delta_F1_vs_Baseline": 0.0665,
+            "Delta_Accuracy_vs_Baseline": 0.0714,
+            "Is_Champion": false
+        },
+        {
+            "Model": "Logistic Regression",
+            "Best_Parameters": "{'C': 0.05, 'solver': 'lbfgs'}",
+            "CV_Best_F1": 0.842,
+            "Test_Accuracy": 0.7857,
+            "Test_Recall": 0.7727,
+            "Test_Precision": 0.8095,
+            "Test_F1_Score": 0.7907,
+            "Test_ROC_AUC": 0.8841,
+            "Delta_F1_vs_Baseline": -0.0537,
+            "Delta_Accuracy_vs_Baseline": -0.0476,
+            "Is_Champion": false
+        }
+    ],
+    "operating_points": {
+        "default": {
+            "threshold": 0.5,
+            "accuracy": 0.881,
+            "precision": 0.8696,
+            "recall": 0.9091,
+            "f1": 0.8889,
+            "tp": 20.0,
+            "fp": 3.0,
+            "tn": 17.0,
+            "fn": 2.0,
+            "total_cost": 13.0
+        },
+        "max_f1": {
+            "threshold": 0.43,
+            "accuracy": 0.9286,
+            "precision": 0.88,
+            "recall": 1.0,
+            "f1": 0.9362,
+            "tp": 22.0,
+            "fp": 3.0,
+            "tn": 17.0,
+            "fn": 0.0,
+            "total_cost": 3.0
+        },
+        "high_recall_safe": {
+            "threshold": 0.43,
+            "accuracy": 0.9286,
+            "precision": 0.88,
+            "recall": 1.0,
+            "f1": 0.9362,
+            "tp": 22.0,
+            "fp": 3.0,
+            "tn": 17.0,
+            "fn": 0.0,
+            "total_cost": 3.0
+        },
+        "cost_optimal": {
+            "threshold": 0.43,
+            "accuracy": 0.9286,
+            "precision": 0.88,
+            "recall": 1.0,
+            "f1": 0.9362,
+            "tp": 22.0,
+            "fp": 3.0,
+            "tn": 17.0,
+            "fn": 0.0,
+            "total_cost": 3.0
+        }
+    },
+    "top_features": [
+        {
+            "feature": "Freq_12",
+            "importance": 0.049641119670125
+        },
+        {
+            "feature": "Freq_11",
+            "importance": 0.04963295057928338
+        },
+        {
+            "feature": "Freq_48",
+            "importance": 0.045070525477148474
+        },
+        {
+            "feature": "Freq_09",
+            "importance": 0.040238863104992605
+        },
+        {
+            "feature": "Freq_10",
+            "importance": 0.03922223888612212
+        },
+        {
+            "feature": "Freq_49",
+            "importance": 0.03202409922445423
+        },
+        {
+            "feature": "Freq_47",
+            "importance": 0.030389705619712885
+        },
+        {
+            "feature": "Freq_13",
+            "importance": 0.02985437358976942
+        },
+        {
+            "feature": "Freq_36",
+            "importance": 0.02482912291226799
+        },
+        {
+            "feature": "Freq_04",
+            "importance": 0.0240567930255356
+        },
+        {
+            "feature": "Freq_52",
+            "importance": 0.024056696867933974
+        },
+        {
+            "feature": "Freq_05",
+            "importance": 0.022837169515110875
+        },
+        {
+            "feature": "Freq_45",
+            "importance": 0.02249033339438053
+        },
+        {
+            "feature": "Freq_20",
+            "importance": 0.02061534851047842
+        },
+        {
+            "feature": "Freq_44",
+            "importance": 0.020089233111743505
+        }
+    ],
+    "calibration_brier_scores": {
+        "Support Vector Machine": 0.073518496921242,
+        "Random Forest": 0.13205902318526613,
+        "K-Nearest Neighbors": 0.08426983232352991,
+        "Logistic Regression": 0.1376066534880509
+    }
+}

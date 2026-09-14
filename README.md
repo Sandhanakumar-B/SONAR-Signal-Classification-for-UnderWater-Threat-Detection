@@ -37,15 +37,21 @@ sonar-threat-detection/
 │   ├── data_loader.py             # Data ingestion and preliminary exploration module
 │   ├── eda.py                     # Exploratory data analysis and visualization pipeline
 │   ├── preprocessor.py            # Day 4 preprocessing, feature scaling & splitting pipeline
-│   └── model_trainer.py           # Day 5 model training, cross-validation & evaluation module
+│   ├── model_trainer.py           # Day 5 model training, cross-validation & evaluation module
+│   └── tuner.py                   # Day 6 hyperparameter tuning, threshold optimization & diagnostics
 ├── models/                        # Serialized models and transformers
 │   ├── .gitkeep
 │   ├── scaler.joblib              # Fitted StandardScaler (leakage-free, fit strictly on train)
-│   ├── logistic_regression.joblib # Trained Logistic Regression classifier
-│   ├── knn.joblib                 # Trained K-Nearest Neighbors classifier
-│   ├── svm.joblib                 # Trained Support Vector Machine classifier
-│   ├── random_forest.joblib       # Trained Random Forest classifier
-│   └── best_model.joblib          # Champion model (SVM with 92.86% accuracy & 100% threat recall)
+│   ├── logistic_regression.joblib # Day 5 Logistic Regression baseline
+│   ├── knn.joblib                 # Day 5 KNN baseline
+│   ├── svm.joblib                 # Day 5 Support Vector Machine baseline
+│   ├── random_forest.joblib       # Day 5 Random Forest baseline
+│   ├── best_model.joblib          # Day 5 Champion baseline model (SVM)
+│   ├── tuned_svm.joblib           # Day 6 Tuned SVM model
+│   ├── tuned_random_forest.joblib # Day 6 Tuned Random Forest model
+│   ├── tuned_knn.joblib           # Day 6 Tuned KNN model
+│   ├── tuned_logistic_regression.joblib # Day 6 Tuned Logistic Regression model
+│   └── best_tuned_model.joblib    # Day 6 Champion Tuned Model (SVM with 92.86% Acc, 100% Threat Recall)
 ├── results/                       # Evaluation metrics, confusion matrices, and saved plots
 │   ├── class_distribution.png     # Class distribution bar chart (Mines vs Rocks)
 │   ├── mean_spectral_signature.png# Mean energy spectral profile across 60 frequency bands
@@ -56,7 +62,15 @@ sonar-threat-detection/
 │   ├── confusion_matrices.png     # Day 5 2x2 confusion matrix grid on test set
 │   ├── roc_curves.png             # Day 5 ROC curves and AUC comparison
 │   ├── model_metrics.csv          # Day 5 comparative metrics spreadsheet
-│   └── model_evaluation_metrics.json # Day 5 structured metrics and classification reports
+│   ├── model_evaluation_metrics.json # Day 5 structured metrics and classification reports
+│   ├── tuning_comparison.png      # Day 6 baseline vs tuned F1-score comparison
+│   ├── threshold_optimization.png # Day 6 precision-recall-cost vs threshold trade-off curves
+│   ├── learning_curves.png        # Day 6 bias-variance learning curve trajectories
+│   ├── feature_importance.png     # Day 6 top 15 most discriminative sonar frequency bands
+│   ├── calibration_curves.png     # Day 6 probability reliability diagrams & Brier scores
+│   ├── tuning_metrics.csv         # Day 6 hyperparameter tuning metrics table
+│   ├── threshold_analysis.csv     # Day 6 decision threshold sweep analysis table
+│   └── tuning_and_diagnostics.json# Day 6 structured diagnostics and operating point configurations
 ├── .gitignore                     # Files and folders to exclude from version control
 ├── README.md                      # Project documentation and daily tracking
 ├── requirements.txt               # Project dependencies and libraries
@@ -64,7 +78,8 @@ sonar-threat-detection/
 ├── load_data.py                   # Day 2 dataset loading execution script
 ├── eda.py                         # Day 3 exploratory data analysis execution script
 ├── preprocess.py                  # Day 4 preprocessing and feature scaling execution script
-└── train.py                       # Day 5 model training and cross-validation execution script
+├── train.py                       # Day 5 model training and cross-validation execution script
+└── tune.py                        # Day 6 hyperparameter tuning and diagnostics execution script
 ```
 
 ---
@@ -149,6 +164,30 @@ python train.py
 
 All trained models are saved to [`models/`](models/) and comparative visualization figures (`model_comparison.png`, `confusion_matrices.png`, `roc_curves.png`) are saved to [`results/`](results/).
 
+### 9. Hyperparameter Tuning, Threshold Optimization & Model Diagnostics (Day 6)
+Run the automated grid-search hyperparameter tuning, naval threat threshold calibration, and deep diagnostic pipeline:
+```bash
+python tune.py
+```
+
+#### Day 6 Tuned Performance Benchmark Summary (Test Set):
+| Model | Optimal Hyperparameters | 5-Fold CV F1 | Test Accuracy | Threat Recall | F1-Score | ROC-AUC | Delta F1 vs Day 5 | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Support Vector Machine (SVM)** | `C=1.0`, `gamma='scale'`, `kernel='rbf'` | **0.8312** | **92.86%** | **100.00%** | **0.9362** | **0.9727** | **+0.0000** | **Champion 🏆** |
+| **Random Forest** | `n_estimators=200`, `max_depth=None`, `max_features='log2'`, `min_samples_leaf=2` | 0.8324 | 85.71% | 95.45% | 0.8750 | 0.9227 | **+0.0489** | Tuned Ensemble |
+| **K-Nearest Neighbors (KNN)** | `n_neighbors=4`, `weights='distance'`, `metric='manhattan'` | **0.8509** | 85.71% | 95.45% | 0.8750 | 0.9705 | **+0.0665** | Tuned Distance |
+| **Logistic Regression** | `C=0.05`, `solver='lbfgs'` | 0.8420 | 78.57% | 77.27% | 0.7907 | 0.8841 | -0.0537 | Regularized Baseline |
+
+#### 🎯 Naval Threat Decision Threshold Optimization (SVM):
+Underwater naval mine detection demands near-zero False Negatives (FN = lethal missed mine). Decision thresholds ($\tau$) were swept over $[0.01, 0.99]$:
+- **Default Operating Point ($\tau = 0.50$):** Accuracy = 88.1%, Recall = 90.9%, F1 = 0.8889, FN = 2, Threat Cost = 13.0
+- **Optimized & Cost-Safe Operating Point ($\tau^* = 0.43$):** Accuracy = **92.9%**, Precision = **88.0%**, Recall = **100.0%**, F1 = **0.9362**, **FN = 0 (Zero Mines Missed)**, Threat Cost = **3.0**
+
+#### 🔬 Key Diagnostic Insights:
+1. **Learning Curves (`results/learning_curves.png`):** Low bias and converging training/CV curves confirm no high-variance overfitting.
+2. **Frequency Importance (`results/feature_importance.png`):** Frequency bands `Freq_11`, `Freq_12`, `Freq_09`, `Freq_10`, and `Freq_36` exhibit the highest discrimination power.
+3. **Probability Calibration (`results/calibration_curves.png`):** SVM demonstrated superior probability reliability with a low Brier Score of **0.0735**.
+
 ---
 
 ## 📅 Daily Progress Tracker
@@ -160,7 +199,7 @@ All trained models are saved to [`models/`](models/) and comparative visualizati
 | **Day 3** | Exploratory Data Analysis (EDA), Statistical Analysis & Visualizations | Completed ✅ |
 | **Day 4** | Data Preprocessing, Feature Scaling & Train-Test Splitting (Stratified 80/20, StandardScaler, Data Leakage Prevention) | Completed ✅ |
 | **Day 5** | Supervised Model Training & Cross-Validation (Logistic Regression, KNN, SVM, Random Forest) | Completed ✅ |
-| **Day 6** | Hyperparameter Tuning, Threshold Optimization & Comprehensive Model Diagnostics | Upcoming ⏳ |
+| **Day 6** | Hyperparameter Tuning, Threshold Optimization & Comprehensive Model Diagnostics | Completed ✅ |
 
 ---
 

@@ -34,6 +34,16 @@ from .model_trainer import (
     SonarModelTrainer,
     run_full_training,
 )
+from .tuner import (
+    get_hyperparameter_grids,
+    tune_all_models,
+    optimize_decision_thresholds,
+    compute_model_diagnostics,
+    generate_and_save_diagnostic_plots,
+    save_tuning_artifacts,
+    SonarModelTuner,
+    run_full_tuning,
+)
 
 __all__ = [
     "load_sonar_data",
@@ -62,6 +72,14 @@ __all__ = [
     "save_trained_models",
     "SonarModelTrainer",
     "run_full_training",
+    "get_hyperparameter_grids",
+    "tune_all_models",
+    "optimize_decision_thresholds",
+    "compute_model_diagnostics",
+    "generate_and_save_diagnostic_plots",
+    "save_tuning_artifacts",
+    "SonarModelTuner",
+    "run_full_tuning",
 ]
 
 
