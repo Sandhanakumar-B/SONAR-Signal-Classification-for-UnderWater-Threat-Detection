@@ -44,6 +44,7 @@ from .tuner import (
     SonarModelTuner,
     run_full_tuning,
 )
+from .predictor import SonarThreatPredictor
 
 __all__ = [
     "load_sonar_data",
@@ -80,6 +81,7 @@ __all__ = [
     "save_tuning_artifacts",
     "SonarModelTuner",
     "run_full_tuning",
+    "SonarThreatPredictor",
 ]
 
 

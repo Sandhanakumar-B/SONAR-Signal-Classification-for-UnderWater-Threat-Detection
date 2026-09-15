@@ -79,7 +79,8 @@ sonar-threat-detection/
 ├── eda.py                         # Day 3 exploratory data analysis execution script
 ├── preprocess.py                  # Day 4 preprocessing and feature scaling execution script
 ├── train.py                       # Day 5 model training and cross-validation execution script
-└── tune.py                        # Day 6 hyperparameter tuning and diagnostics execution script
+├── tune.py                        # Day 6 hyperparameter tuning and diagnostics execution script
+└── predict.py                     # Day 7 real-time inference and interactive prediction script
 ```
 
 ---
@@ -188,6 +189,16 @@ Underwater naval mine detection demands near-zero False Negatives (FN = lethal m
 2. **Frequency Importance (`results/feature_importance.png`):** Frequency bands `Freq_11`, `Freq_12`, `Freq_09`, `Freq_10`, and `Freq_36` exhibit the highest discrimination power.
 3. **Probability Calibration (`results/calibration_curves.png`):** SVM demonstrated superior probability reliability with a low Brier Score of **0.0735**.
 
+### 10. Real-Time Sonar Signal Inference & Interactive Prediction (Day 7)
+Run the real-time interactive prediction CLI to classify new sonar signals:
+```bash
+python predict.py --test-samples
+```
+For interactive mode:
+```bash
+python predict.py --interactive
+```
+
 ---
 
 ## 📅 Daily Progress Tracker
@@ -200,6 +211,7 @@ Underwater naval mine detection demands near-zero False Negatives (FN = lethal m
 | **Day 4** | Data Preprocessing, Feature Scaling & Train-Test Splitting (Stratified 80/20, StandardScaler, Data Leakage Prevention) | Completed ✅ |
 | **Day 5** | Supervised Model Training & Cross-Validation (Logistic Regression, KNN, SVM, Random Forest) | Completed ✅ |
 | **Day 6** | Hyperparameter Tuning, Threshold Optimization & Comprehensive Model Diagnostics | Completed ✅ |
+| **Day 7** | Real-Time Sonar Signal Inference & Interactive Prediction System | Completed ✅ |
 
 ---
 
