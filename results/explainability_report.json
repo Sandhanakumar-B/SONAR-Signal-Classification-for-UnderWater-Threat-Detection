@@ -1,0 +1,178 @@
+{
+    "timestamp": "2026-09-17T23:01:45.227311",
+    "model_analyzed": "Support Vector Machine (best_tuned_model.joblib)",
+    "safe_decision_threshold": 0.43,
+    "top_permutation_features": [
+        {
+            "feature": "Freq_28",
+            "mean_importance": 0.059290529516203457,
+            "std_importance": 0.020228993982191218
+        },
+        {
+            "feature": "Freq_27",
+            "mean_importance": 0.05880818670827925,
+            "std_importance": 0.019344247616791387
+        },
+        {
+            "feature": "Freq_22",
+            "mean_importance": 0.050120850814652895,
+            "std_importance": 0.026529283444421268
+        },
+        {
+            "feature": "Freq_11",
+            "mean_importance": 0.04974046664610962,
+            "std_importance": 0.02347898529987678
+        },
+        {
+            "feature": "Freq_12",
+            "mean_importance": 0.04838044334806598,
+            "std_importance": 0.017447283562238264
+        },
+        {
+            "feature": "Freq_29",
+            "mean_importance": 0.04733034799080456,
+            "std_importance": 0.021964742807431006
+        },
+        {
+            "feature": "Freq_15",
+            "mean_importance": 0.04626227569864418,
+            "std_importance": 0.023364758159333213
+        },
+        {
+            "feature": "Freq_44",
+            "mean_importance": 0.044700473747652326,
+            "std_importance": 0.023690781755724314
+        },
+        {
+            "feature": "Freq_23",
+            "mean_importance": 0.04242869646199901,
+            "std_importance": 0.023653333929861145
+        },
+        {
+            "feature": "Freq_26",
+            "mean_importance": 0.040840100044540445,
+            "std_importance": 0.010681561321595487
+        },
+        {
+            "feature": "Freq_39",
+            "mean_importance": 0.03887303882017777,
+            "std_importance": 0.01623693894488068
+        },
+        {
+            "feature": "Freq_36",
+            "mean_importance": 0.0372237989655725,
+            "std_importance": 0.02533968288676401
+        },
+        {
+            "feature": "Freq_16",
+            "mean_importance": 0.036124850803719626,
+            "std_importance": 0.016852304258731087
+        },
+        {
+            "feature": "Freq_37",
+            "mean_importance": 0.035022476458977096,
+            "std_importance": 0.022651118176888987
+        },
+        {
+            "feature": "Freq_54",
+            "mean_importance": 0.034057971014492816,
+            "std_importance": 0.010467373395333672
+        }
+    ],
+    "top_shap_features": [
+        {
+            "feature": "Freq_12",
+            "mean_abs_shap": 0.038889163504266404
+        },
+        {
+            "feature": "Freq_11",
+            "mean_abs_shap": 0.02999201706346331
+        },
+        {
+            "feature": "Freq_49",
+            "mean_abs_shap": 0.019940874723603928
+        },
+        {
+            "feature": "Freq_37",
+            "mean_abs_shap": 0.0193341219389226
+        },
+        {
+            "feature": "Freq_36",
+            "mean_abs_shap": 0.018938977290531962
+        },
+        {
+            "feature": "Freq_09",
+            "mean_abs_shap": 0.018922106591123755
+        },
+        {
+            "feature": "Freq_10",
+            "mean_abs_shap": 0.01866605001777341
+        },
+        {
+            "feature": "Freq_48",
+            "mean_abs_shap": 0.014260479877034604
+        },
+        {
+            "feature": "Freq_47",
+            "mean_abs_shap": 0.01366518821897681
+        },
+        {
+            "feature": "Freq_52",
+            "mean_abs_shap": 0.009723352908280955
+        },
+        {
+            "feature": "Freq_22",
+            "mean_abs_shap": 0.009293089544146885
+        },
+        {
+            "feature": "Freq_21",
+            "mean_abs_shap": 0.008884628519887607
+        },
+        {
+            "feature": "Freq_28",
+            "mean_abs_shap": 0.007843193307106821
+        },
+        {
+            "feature": "Freq_20",
+            "mean_abs_shap": 0.007385446346416025
+        },
+        {
+            "feature": "Freq_42",
+            "mean_abs_shap": 0.007125377857015424
+        }
+    ],
+    "misclassifications_summary": {
+        "total_test_samples": 42,
+        "true_positives": 22,
+        "true_negatives": 17,
+        "false_positives": 3,
+        "false_negatives": 0,
+        "zero_missed_mines_verified": true,
+        "errors": [
+            {
+                "test_sample_index": 5,
+                "actual": "Rock",
+                "predicted": "Mine",
+                "error_type": "False Positive (False Alarm)",
+                "predicted_prob_mine": 0.696347829908531,
+                "margin_from_threshold": 0.26634782990853095
+            },
+            {
+                "test_sample_index": 17,
+                "actual": "Rock",
+                "predicted": "Mine",
+                "error_type": "False Positive (False Alarm)",
+                "predicted_prob_mine": 0.5086471090555464,
+                "margin_from_threshold": 0.07864710905554645
+            },
+            {
+                "test_sample_index": 33,
+                "actual": "Rock",
+                "predicted": "Mine",
+                "error_type": "False Positive (False Alarm)",
+                "predicted_prob_mine": 0.6852576466938209,
+                "margin_from_threshold": 0.25525764669382095
+            }
+        ]
+    }
+}

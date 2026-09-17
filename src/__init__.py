@@ -45,6 +45,15 @@ from .tuner import (
     run_full_tuning,
 )
 from .predictor import SonarThreatPredictor
+from .explainer import (
+    load_explainability_data,
+    compute_permutation_importance,
+    compute_shap_explanations,
+    analyze_misclassifications,
+    render_and_save_explainability_plots,
+    save_explainability_artifacts,
+    run_full_explainability,
+)
 
 __all__ = [
     "load_sonar_data",
@@ -82,6 +91,13 @@ __all__ = [
     "SonarModelTuner",
     "run_full_tuning",
     "SonarThreatPredictor",
+    "load_explainability_data",
+    "compute_permutation_importance",
+    "compute_shap_explanations",
+    "analyze_misclassifications",
+    "render_and_save_explainability_plots",
+    "save_explainability_artifacts",
+    "run_full_explainability",
 ]
 
 

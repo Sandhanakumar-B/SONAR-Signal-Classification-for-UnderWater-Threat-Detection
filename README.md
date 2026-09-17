@@ -38,7 +38,9 @@ sonar-threat-detection/
 │   ├── eda.py                     # Exploratory data analysis and visualization pipeline
 │   ├── preprocessor.py            # Day 4 preprocessing, feature scaling & splitting pipeline
 │   ├── model_trainer.py           # Day 5 model training, cross-validation & evaluation module
-│   └── tuner.py                   # Day 6 hyperparameter tuning, threshold optimization & diagnostics
+│   ├── tuner.py                   # Day 6 hyperparameter tuning, threshold optimization & diagnostics
+│   ├── predictor.py               # Day 7 real-time inference and prediction engine
+│   └── explainer.py               # Day 8 model explainability, SHAP & error analysis module
 ├── models/                        # Serialized models and transformers
 │   ├── .gitkeep
 │   ├── scaler.joblib              # Fitted StandardScaler (leakage-free, fit strictly on train)
@@ -70,7 +72,13 @@ sonar-threat-detection/
 │   ├── calibration_curves.png     # Day 6 probability reliability diagrams & Brier scores
 │   ├── tuning_metrics.csv         # Day 6 hyperparameter tuning metrics table
 │   ├── threshold_analysis.csv     # Day 6 decision threshold sweep analysis table
-│   └── tuning_and_diagnostics.json# Day 6 structured diagnostics and operating point configurations
+│   ├── tuning_and_diagnostics.json# Day 6 structured diagnostics and operating point configurations
+│   ├── permutation_importance.png # Day 8 test-set permutation feature importance plot
+│   ├── shap_summary.png           # Day 8 SHAP global feature attribution bar chart
+│   ├── shap_beeswarm.png          # Day 8 SHAP beeswarm directional impact plot
+│   ├── misclassification_analysis.png # Day 8 error spectral curves & safety margins
+│   ├── local_prediction_waterfall.png # Day 8 local instance explanations (Mine vs Rock)
+│   └── explainability_report.json # Day 8 structured explainability & error audit report
 ├── .gitignore                     # Files and folders to exclude from version control
 ├── README.md                      # Project documentation and daily tracking
 ├── requirements.txt               # Project dependencies and libraries
@@ -80,7 +88,8 @@ sonar-threat-detection/
 ├── preprocess.py                  # Day 4 preprocessing and feature scaling execution script
 ├── train.py                       # Day 5 model training and cross-validation execution script
 ├── tune.py                        # Day 6 hyperparameter tuning and diagnostics execution script
-└── predict.py                     # Day 7 real-time inference and interactive prediction script
+├── predict.py                     # Day 7 real-time inference and interactive prediction script
+└── explain.py                     # Day 8 model explainability and SHAP analysis execution script
 ```
 
 ---
@@ -199,6 +208,27 @@ For interactive mode:
 python predict.py --interactive
 ```
 
+### 11. Model Explainability, SHAP & Error Analysis (Day 8)
+Run the comprehensive interpretability and attribution pipeline on the champion model:
+```bash
+python explain.py
+```
+
+#### Key Interpretability Insights:
+1. **Permutation Feature Importance (`results/permutation_importance.png`):**
+   - Evaluating F1 degradation on unseen test data revealed that frequency bands **`Freq_28`** ($\Delta\text{F1} = +0.0593$), **`Freq_27`** ($\Delta\text{F1} = +0.0588$), **`Freq_22`**, **`Freq_11`**, and **`Freq_12`** are the most sensitive acoustic channels for mine detection.
+2. **SHAP Global Feature Attribution (`results/shap_summary.png`, `results/shap_beeswarm.png`):**
+   - **`Freq_12`** (mean $|SHAP| = 0.0389$) and **`Freq_11`** (mean $|SHAP| = 0.0300$) exhibit the strongest direct contribution to classifying a signal as an underwater naval mine.
+   - Beeswarm distributions show that higher acoustic energy in mid-frequency bands consistently pushes prediction confidence towards the **Mine (Threat)** category.
+3. **Local Prediction Waterfalls (`results/local_prediction_waterfall.png`):**
+   - Granular feature-by-feature force breakdown explaining individual sonar pings (confident mine vs. confident rock).
+4. **Misclassification & Operational Safety Audit (`results/misclassification_analysis.png`, `results/explainability_report.json`):**
+   - At the cost-safe operating threshold ($\tau^* = 0.43$):
+     - **True Positives (Mines Intercepted):** 22 / 22 (100.0% Recall)
+     - **False Negatives (Missed Mines):** **0 (Zero lethal misses)**
+     - **False Positives (False Alarms on Rocks):** 3 / 20
+   - Spectral deviation curves show that the 3 false alarms occurred on borderline rock signatures with unusually elevated energy in the mid-frequency range.
+
 ---
 
 ## 📅 Daily Progress Tracker
@@ -212,6 +242,7 @@ python predict.py --interactive
 | **Day 5** | Supervised Model Training & Cross-Validation (Logistic Regression, KNN, SVM, Random Forest) | Completed ✅ |
 | **Day 6** | Hyperparameter Tuning, Threshold Optimization & Comprehensive Model Diagnostics | Completed ✅ |
 | **Day 7** | Real-Time Sonar Signal Inference & Interactive Prediction System | Completed ✅ |
+| **Day 8** | Model Explainability, SHAP Feature Attribution & Error Profile Analysis | Completed ✅ |
 
 ---
 
