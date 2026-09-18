@@ -89,10 +89,14 @@ class SonarThreatPredictor:
             raise ValueError(f"Expected 60 acoustic frequency bands, got {features_arr.shape[1] if len(features_arr.shape) > 1 else len(features_arr)}")
             
         # Standardize using fitted scaler (no data leakage)
-        scaled_features = self.scaler.transform(features_arr)
+        if hasattr(self.scaler, "feature_names_in_"):
+            features_df = pd.DataFrame(features_arr, columns=self.scaler.feature_names_in_)
+            scaled_features = self.scaler.transform(features_df)
+        else:
+            scaled_features = self.scaler.transform(features_arr)
         return scaled_features
 
-    def predict(self, features, use_safe_threshold=True):
+    def predict(self, features, use_safe_threshold=True, threshold=None):
         """
         Performs a prediction on a single sonar signal.
         
@@ -102,6 +106,8 @@ class SonarThreatPredictor:
             60 raw frequency bands.
         use_safe_threshold : bool
             If True, uses the optimized high-recall threshold to ensure 0 missed mines.
+        threshold : float or None
+            Custom decision threshold in [0, 1]. If provided, overrides use_safe_threshold.
             
         Returns
         -------
@@ -111,39 +117,48 @@ class SonarThreatPredictor:
         start_time = time.perf_counter()
         
         X_scaled = self.preprocess_input(features)
+        if hasattr(self.model, "feature_names_in_"):
+            X_eval = pd.DataFrame(X_scaled, columns=self.model.feature_names_in_)
+        else:
+            X_eval = X_scaled
         
         # Get probabilities (Class 1 = Mine, Class 0 = Rock)
         if hasattr(self.model, "predict_proba"):
-            probs = self.model.predict_proba(X_scaled)[0]
+            probs = self.model.predict_proba(X_eval)[0]
             prob_mine = probs[1]
         else:
             # Fallback if model doesn't support probability
-            pred = self.model.predict(X_scaled)[0]
+            pred = self.model.predict(X_eval)[0]
             prob_mine = 1.0 if pred == 1 else 0.0
 
         # Apply threshold
-        threshold = self.safe_threshold if use_safe_threshold else 0.50
-        is_mine = prob_mine >= threshold
+        if threshold is not None:
+            applied_threshold = float(threshold)
+        else:
+            applied_threshold = self.safe_threshold if use_safe_threshold else 0.50
+
+        is_mine = prob_mine >= applied_threshold
         
         latency_ms = (time.perf_counter() - start_time) * 1000
         
         # Confidence score (distance from threshold)
         if is_mine:
-            confidence = ((prob_mine - threshold) / (1.0 - threshold)) * 100 if threshold < 1.0 else 100.0
+            confidence = ((prob_mine - applied_threshold) / (1.0 - applied_threshold)) * 100 if applied_threshold < 1.0 else 100.0
         else:
-            confidence = ((threshold - prob_mine) / threshold) * 100 if threshold > 0.0 else 100.0
+            confidence = ((applied_threshold - prob_mine) / applied_threshold) * 100 if applied_threshold > 0.0 else 100.0
 
         result = {
             "is_threat": bool(is_mine),
             "classification": "Mine (Threat Detected)" if is_mine else "Rock (Benign Object)",
             "probability_mine": float(prob_mine),
-            "applied_threshold": float(threshold),
+            "probability_rock": float(1.0 - prob_mine),
+            "applied_threshold": float(applied_threshold),
             "confidence_percent": float(confidence),
             "latency_ms": float(latency_ms)
         }
         return result
 
-    def predict_batch(self, df, use_safe_threshold=True):
+    def predict_batch(self, df, use_safe_threshold=True, threshold=None):
         """
         Performs vectorized predictions on a batch DataFrame of signals.
         """
@@ -160,13 +175,18 @@ class SonarThreatPredictor:
             preds = self.model.predict(X_scaled)
             probs_mine = preds.astype(float)
             
-        threshold = self.safe_threshold if use_safe_threshold else 0.50
-        predictions = (probs_mine >= threshold).astype(int)
+        if threshold is not None:
+            applied_threshold = float(threshold)
+        else:
+            applied_threshold = self.safe_threshold if use_safe_threshold else 0.50
+
+        predictions = (probs_mine >= applied_threshold).astype(int)
         
         latency_ms = (time.perf_counter() - start_time) * 1000
         
         results_df = df.copy()
         results_df["Probability_Mine"] = probs_mine
+        results_df["Probability_Rock"] = 1.0 - probs_mine
         results_df["Prediction"] = ["Mine" if p == 1 else "Rock" for p in predictions]
         
         summary = {

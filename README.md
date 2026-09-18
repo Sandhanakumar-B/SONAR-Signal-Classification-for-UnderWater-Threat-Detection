@@ -39,8 +39,15 @@ sonar-threat-detection/
 │   ├── preprocessor.py            # Day 4 preprocessing, feature scaling & splitting pipeline
 │   ├── model_trainer.py           # Day 5 model training, cross-validation & evaluation module
 │   ├── tuner.py                   # Day 6 hyperparameter tuning, threshold optimization & diagnostics
-│   ├── predictor.py               # Day 7 real-time inference and prediction engine
+│   ├── predictor.py               # Day 7 real-time inference and prediction engine (updated Day 9)
 │   └── explainer.py               # Day 8 model explainability, SHAP & error analysis module
+├── templates/                     # Day 9 Flask HTML templates
+│   └── index.html                 # Tactical Sonar Defense Dashboard (dark HUD UI)
+├── static/                        # Day 9 web static assets
+│   ├── css/
+│   │   └── style.css              # Naval dark theme design system (glassmorphism, animations)
+│   └── js/
+│       └── app.js                 # Client-side state, API calls, canvas spectral renderer
 ├── models/                        # Serialized models and transformers
 │   ├── .gitkeep
 │   ├── scaler.joblib              # Fitted StandardScaler (leakage-free, fit strictly on train)
@@ -81,7 +88,7 @@ sonar-threat-detection/
 │   └── explainability_report.json # Day 8 structured explainability & error audit report
 ├── .gitignore                     # Files and folders to exclude from version control
 ├── README.md                      # Project documentation and daily tracking
-├── requirements.txt               # Project dependencies and libraries
+├── requirements.txt               # Project dependencies and libraries (Flask added Day 9)
 ├── test_environment.py            # Environment and dependency verification script
 ├── load_data.py                   # Day 2 dataset loading execution script
 ├── eda.py                         # Day 3 exploratory data analysis execution script
@@ -89,7 +96,8 @@ sonar-threat-detection/
 ├── train.py                       # Day 5 model training and cross-validation execution script
 ├── tune.py                        # Day 6 hyperparameter tuning and diagnostics execution script
 ├── predict.py                     # Day 7 real-time inference and interactive prediction script
-└── explain.py                     # Day 8 model explainability and SHAP analysis execution script
+├── explain.py                     # Day 8 model explainability and SHAP analysis execution script
+└── app.py                         # Day 9 Flask web application server & REST API entry point
 ```
 
 ---
@@ -231,6 +239,43 @@ python explain.py
 
 ---
 
+### 12. Interactive Web Application & Tactical Defense Dashboard (Day 9)
+Launch the Flask web server to access the full interactive Tactical Sonar Defense Dashboard:
+```bash
+python app.py
+```
+Then open your browser at: **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
+
+#### 🌐 Dashboard Features:
+- **Curated Signal Presets:** One-click load of 4 authenticated benchmark signals (Confident Mine, Borderline Mine, Confident Rock, Borderline Rock) from held-out test data.
+- **Acoustic Spectral Visualizer:** Real-time canvas chart overlaying the active signal against mean Mine/Rock reference profiles across all 60 frequency bands.
+- **Tactical Threat Gauge:** DEFCON-style threat level assessment (DEFCON-1 to DEFCON-4) with probability meters and confidence margin display.
+- **Live Decision Threshold Slider ($\tau$):** Sweep the detection threshold from 0.01 to 0.99 in real time. The **Borderline Mine** preset demonstrates the critical difference between $\tau = 0.43$ (intercepted) and $\tau = 0.50$ (missed).
+- **On-Demand SHAP Attribution:** Per-signal local feature attribution panel showing the top acoustic frequency bands driving the classification toward Mine or Rock.
+- **Batch CSV Upload:** Upload multi-signal CSV files for vectorized batch inference with a structured summary report.
+
+#### 🔌 REST API Endpoints:
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | System status, model version, and loaded artifact diagnostics |
+| `GET` | `/api/samples` | Pre-configured curated test samples and reference spectral profiles |
+| `POST` | `/api/predict` | Single 60-band signal classification with optional custom threshold |
+| `POST` | `/api/explain` | On-demand SHAP local attribution for a given 60-band signal |
+| `POST` | `/api/predict_batch` | Multi-signal batch inference from CSV file upload or JSON array |
+
+**Example API usage:**
+```bash
+# Health check
+curl http://127.0.0.1:5000/api/health
+
+# Classify a signal (replace [...] with 60 float values)
+curl -X POST http://127.0.0.1:5000/api/predict \
+     -H "Content-Type: application/json" \
+     -d '{"features": [0.028, 0.060, ...], "threshold": 0.43}'
+```
+
+---
+
 ## 📅 Daily Progress Tracker
 
 | Day | Milestone / Task | Status |
@@ -243,6 +288,7 @@ python explain.py
 | **Day 6** | Hyperparameter Tuning, Threshold Optimization & Comprehensive Model Diagnostics | Completed ✅ |
 | **Day 7** | Real-Time Sonar Signal Inference & Interactive Prediction System | Completed ✅ |
 | **Day 8** | Model Explainability, SHAP Feature Attribution & Error Profile Analysis | Completed ✅ |
+| **Day 9** | Interactive Web Application, Tactical Defense Dashboard & Production REST API | Completed ✅ |
 
 ---
 

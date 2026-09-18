@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tactical Machine Learning-based Sonar Signal Classification System for Underwater Threat Detection (Naval Mines vs Geological Rocks).">
+    <title>SONAR Tactical Defense System | AI Acoustic Mine Detection</title>
+    
+    <!-- Google Fonts: Orbitron for tactical display, Outfit for clean UI, JetBrains Mono for data -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="hud-scanline"></div>
+    <div class="hud-vignette"></div>
+
+    <!-- MAIN WRAPPER -->
+    <div class="app-container">
+
+        <!-- TACTICAL RADAR BANNER / HEADER -->
+        <header class="hud-header" id="hud-header">
+            <div class="header-left">
+                <div class="radar-pulse-container" id="radar-pulse-container">
+                    <div class="radar-sweep-anim"></div>
+                    <div class="radar-dot"></div>
+                </div>
+                <div class="title-group">
+                    <div class="system-tag">NAVAL ACOUSTIC INTELLIGENCE // ML DEFENSE PIPELINE</div>
+                    <h1 class="system-title" id="system-title">SONAR TACTICAL THREAT DETECTOR</h1>
+                    <p class="system-subtitle">Real-Time Acoustic Echo Classification &amp; Explosive Mine Interception</p>
+                </div>
+            </div>
+
+            <div class="header-stats" id="header-stats">
+                <div class="stat-badge">
+                    <span class="stat-label">CHAMPION MODEL</span>
+                    <span class="stat-value text-accent" id="stat-model-name">Tuned SVM (RBF)</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="stat-label">BENCHMARK ACCURACY</span>
+                    <span class="stat-value text-success" id="stat-accuracy">{{ meta.test_accuracy }}</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="stat-label">THREAT RECALL</span>
+                    <span class="stat-value text-gold" id="stat-recall">{{ meta.threat_recall }}</span>
+                </div>
+                <div class="stat-badge status-live">
+                    <span class="stat-label">SYSTEM STATUS</span>
+                    <span class="stat-value status-dot" id="system-status-indicator">OPERATIONAL</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN DASHBOARD CONTENT GRID -->
+        <main class="dashboard-grid">
+
+            <!-- LEFT COLUMN: INGESTION & TACTICAL CONTROLS -->
+            <section class="grid-col left-col">
+                
+                <!-- CARD 1: SIGNAL PRESETS & INGESTION -->
+                <div class="hud-card" id="card-signal-input">
+                    <div class="card-header">
+                        <div class="card-title-wrap">
+                            <span class="hud-icon">📡</span>
+                            <h2 class="card-title">Acoustic Signal Ingestion</h2>
+                        </div>
+                        <span class="card-badge">60 Channels</span>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Input Mode Selector Tabs -->
+                        <div class="tab-selector" role="tablist" id="tab-selector">
+                            <button type="button" class="tab-btn active" id="tab-btn-presets" data-tab="presets">Curated Presets</button>
+                            <button type="button" class="tab-btn" id="tab-btn-manual" data-tab="manual">Manual Vector</button>
+                            <button type="button" class="tab-btn" id="tab-btn-batch" data-tab="batch">Batch CSV Upload</button>
+                        </div>
+
+                        <!-- TAB CONTENT 1: PRESETS -->
+                        <div class="tab-content active" id="pane-presets">
+                            <p class="tab-description">Select an authenticated acoustic sonar echo from held-out naval benchmark tests:</p>
+                            
+                            <div class="preset-buttons-grid">
+                                <button type="button" class="preset-btn btn-mine-confident" id="btn-preset-confident-mine">
+                                    <div class="preset-header">
+                                        <span class="preset-tag threat-tag">CRITICAL MINE</span>
+                                        <span class="preset-prob">Prob ~0.99</span>
+                                    </div>
+                                    <div class="preset-title">Confirmed Explosive Mine</div>
+                                    <div class="preset-desc">High acoustic resonance across mid-band frequencies (10–25).</div>
+                                </button>
+
+                                <button type="button" class="preset-btn btn-mine-borderline" id="btn-preset-borderline-mine">
+                                    <div class="preset-header">
+                                        <span class="preset-tag safety-test-tag">SAFETY BENCHMARK</span>
+                                        <span class="preset-prob">Prob ~0.44</span>
+                                    </div>
+                                    <div class="preset-title">Borderline Submerged Mine</div>
+                                    <div class="preset-desc">Weak signal. Intercepted by safe threshold (&tau;=0.43), missed at 0.50!</div>
+                                </button>
+
+                                <button type="button" class="preset-btn btn-rock-confident" id="btn-preset-confident-rock">
+                                    <div class="preset-header">
+                                        <span class="preset-tag benign-tag">NATURAL ROCK</span>
+                                        <span class="preset-prob">Prob ~0.00</span>
+                                    </div>
+                                    <div class="preset-title">Confirmed Seafloor Rock</div>
+                                    <div class="preset-desc">Diffuse scattering signature with low high-frequency energy.</div>
+                                </button>
+
+                                <button type="button" class="preset-btn btn-rock-borderline" id="btn-preset-borderline-rock">
+                                    <div class="preset-header">
+                                        <span class="preset-tag warning-tag">BORDERLINE ROCK</span>
+                                        <span class="preset-prob">Prob ~0.51</span>
+                                    </div>
+                                    <div class="preset-title">Borderline Rock (False Alarm)</div>
+                                    <div class="preset-desc">Atypical rock reflection mimicking mid-frequency mine spikes.</div>
+                                </button>
+                            </div>
+
+                            <button type="button" class="btn-secondary full-width mt-3" id="btn-random-signal">
+                                <span>🎲 Load Random Unseen Test Signal</span>
+                            </button>
+                        </div>
+
+                        <!-- TAB CONTENT 2: MANUAL VECTOR -->
+                        <div class="tab-content" id="pane-manual">
+                            <div class="manual-input-header">
+                                <label for="manual-feature-input" class="input-label">Paste 60 Comma-Separated Values (0.0 to 1.0):</label>
+                                <span class="feature-count-badge" id="feature-count-display">0 / 60 Features</span>
+                            </div>
+                            <textarea id="manual-feature-input" class="hud-textarea" rows="5" placeholder="0.0283, 0.0599, 0.0656, 0.0229, ..."></textarea>
+                            <div class="manual-actions">
+                                <button type="button" class="btn-small" id="btn-fill-sample">Paste Sample</button>
+                                <button type="button" class="btn-small" id="btn-clear-manual">Clear</button>
+                            </div>
+                        </div>
+
+                        <!-- TAB CONTENT 3: BATCH CSV -->
+                        <div class="tab-content" id="pane-batch">
+                            <p class="tab-description">Upload a CSV file containing multiple sonar echoes (60 frequency columns per row):</p>
+                            <div class="dropzone" id="csv-dropzone">
+                                <input type="file" id="batch-file-input" accept=".csv" class="file-input-hidden">
+                                <div class="dropzone-content">
+                                    <span class="dropzone-icon">📁</span>
+                                    <p class="dropzone-text" id="dropzone-text">Drag &amp; drop a <code>.csv</code> file or <span class="browse-link">Browse</span></p>
+                                    <span class="dropzone-hint">Accepts standard UCI Sonar formatted CSVs (60 or 61 columns)</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-primary full-width mt-3" id="btn-run-batch" disabled>
+                                <span>Run Batch Inference on CSV</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: OPERATIONAL DECISION THRESHOLD CONTROLS -->
+                <div class="hud-card" id="card-threshold-controls">
+                    <div class="card-header">
+                        <div class="card-title-wrap">
+                            <span class="hud-icon">🛡️</span>
+                            <h2 class="card-title">Naval Decision Threshold (&tau;)</h2>
+                        </div>
+                        <span class="threshold-display-badge" id="threshold-display-badge">&tau; = 0.43</span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="threshold-slider-container">
+                            <div class="slider-labels">
+                                <span class="slider-min">0.01 (Maximum Sensitivity)</span>
+                                <span class="slider-mid">0.50 (Default)</span>
+                                <span class="slider-max">0.99 (High Precision)</span>
+                            </div>
+                            <input type="range" min="0.01" max="0.99" step="0.01" value="0.43" class="hud-slider" id="threshold-slider">
+                        </div>
+
+                        <!-- Threshold Quick Jumps -->
+                        <div class="threshold-presets-bar">
+                            <button type="button" class="btn-preset-tau active" id="btn-tau-safe" data-tau="0.43">
+                                <span>⭐ Safe Operating (&tau; = 0.43)</span>
+                                <small>Zero Missed Mines</small>
+                            </button>
+                            <button type="button" class="btn-preset-tau" id="btn-tau-default" data-tau="0.50">
+                                <span>Default (&tau; = 0.50)</span>
+                                <small>Balanced Error</small>
+                            </button>
+                            <button type="button" class="btn-preset-tau" id="btn-tau-precision" data-tau="0.65">
+                                <span>Conservative (&tau; = 0.65)</span>
+                                <small>Low False Alarms</small>
+                            </button>
+                        </div>
+
+                        <!-- Tactical Explanation Alert -->
+                        <div class="hud-alert alert-info" id="threshold-alert">
+                            <div class="alert-icon">ℹ️</div>
+                            <div class="alert-text">
+                                <strong>Zero-Tolerance Defense Protocol:</strong> At <strong>&tau; = 0.43</strong>, the system achieved <strong>100% Threat Recall (22/22 mines intercepted)</strong> during Day 6 calibration. Missing a live mine causes catastrophic damage; false alarms only require minor secondary sweeps.
+                            </div>
+                        </div>
+
+                        <!-- Primary Execution Button -->
+                        <button type="button" class="btn-primary btn-classify full-width mt-4" id="btn-classify-signal">
+                            <span class="btn-icon">⚡</span>
+                            <span class="btn-text">ANALYZE &amp; CLASSIFY SONAR PING</span>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- RIGHT COLUMN: CLASSIFICATION, RADAR GAUGE & ANALYTICS -->
+            <section class="grid-col right-col">
+
+                <!-- CARD 3: TACTICAL THREAT ASSESSMENT -->
+                <div class="hud-card" id="card-threat-assessment">
+                    <div class="card-header">
+                        <div class="card-title-wrap">
+                            <span class="hud-icon">🎯</span>
+                            <h2 class="card-title">Tactical Threat Assessment</h2>
+                        </div>
+                        <span class="threat-code-badge" id="threat-defcon-badge">DEFCON-1</span>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Main Threat Status Banner -->
+                        <div class="threat-banner threat-critical" id="threat-banner">
+                            <div class="threat-status-icon" id="threat-status-icon">⚠️</div>
+                            <div class="threat-status-text">
+                                <div class="threat-alert-label" id="threat-alert-label">THREAT DETECTED</div>
+                                <div class="threat-classification-name" id="threat-classification-name">EXPLOSIVE NAVAL MINE</div>
+                                <div class="threat-message" id="threat-message">Acoustic echo signature exceeds safe operating threshold. Immediate counter-measure advised.</div>
+                            </div>
+                        </div>
+
+                        <!-- Dual Probability & Confidence Metrics -->
+                        <div class="metrics-summary-grid">
+                            <div class="metric-box">
+                                <div class="metric-title">Mine Threat Likelihood</div>
+                                <div class="metric-value-large text-danger" id="metric-mine-prob">99.2%</div>
+                                <div class="progress-track">
+                                    <div class="progress-fill fill-danger" id="bar-mine-prob" style="width: 99.2%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="metric-box">
+                                <div class="metric-title">Rock / Benign Likelihood</div>
+                                <div class="metric-value-large text-success" id="metric-rock-prob">0.8%</div>
+                                <div class="progress-track">
+                                    <div class="progress-fill fill-success" id="bar-rock-prob" style="width: 0.8%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="metric-box">
+                                <div class="metric-title">Classification Confidence</div>
+                                <div class="metric-value-large text-accent" id="metric-confidence">98.6%</div>
+                                <div class="metric-subtext" id="metric-margin-text">Margin: +0.56 above &tau;</div>
+                            </div>
+
+                            <div class="metric-box">
+                                <div class="metric-title">Inference Latency</div>
+                                <div class="metric-value-large text-gold" id="metric-latency">1.42 ms</div>
+                                <div class="metric-subtext">Real-Time Edge Capable</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: ACOUSTIC SPECTRAL SIGNATURE CANVAS -->
+                <div class="hud-card" id="card-spectral-signature">
+                    <div class="card-header">
+                        <div class="card-title-wrap">
+                            <span class="hud-icon">📊</span>
+                            <h2 class="card-title">Acoustic Energy Spectral Profile (60 Frequency Channels)</h2>
+                        </div>
+                        <div class="chart-toggles">
+                            <label class="toggle-pill active" id="toggle-active">
+                                <span class="pill-dot color-cyan"></span> Active Signal
+                            </label>
+                            <label class="toggle-pill active" id="toggle-mine">
+                                <span class="pill-dot color-mine"></span> Mean Mine
+                            </label>
+                            <label class="toggle-pill active" id="toggle-rock">
+                                <span class="pill-dot color-rock"></span> Mean Rock
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card-body chart-card-body">
+                        <div class="canvas-container">
+                            <canvas id="spectralCanvas" width="800" height="260"></canvas>
+                        </div>
+                        <div class="chart-axis-footer">
+                            <span>Low Frequency (Freq 01-15)</span>
+                            <span>Mid Resonance Bands (Freq 16-35)</span>
+                            <span>High Scattering (Freq 36-60)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 5: LOCAL EXPLAINABILITY & SHAP ATTRIBUTION -->
+                <div class="hud-card" id="card-explainability">
+                    <div class="card-header">
+                        <div class="card-title-wrap">
+                            <span class="hud-icon">🔬</span>
+                            <h2 class="card-title">Local Feature Explainability &amp; Attribution</h2>
+                        </div>
+                        <button type="button" class="btn-explain" id="btn-run-explain">
+                            <span id="explain-btn-icon">⚡</span>
+                            <span id="explain-btn-text">Run SHAP Attribution</span>
+                        </button>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="explainability-status" id="explainability-status">
+                            Click <strong>"Run SHAP Attribution"</strong> to compute real-time mathematical attributions for each acoustic frequency band.
+                        </div>
+
+                        <div class="attribution-columns" id="attribution-columns" style="display: none;">
+                            <!-- Mine Drivers -->
+                            <div class="attr-col">
+                                <div class="attr-col-header text-danger">
+                                    <span>⚠️ Frequencies Driving TOWARDS MINE</span>
+                                    <small>(Positive Attribution)</small>
+                                </div>
+                                <div class="attr-list" id="list-mine-drivers">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Rock Drivers -->
+                            <div class="attr-col">
+                                <div class="attr-col-header text-success">
+                                    <span>🛡️ Frequencies Driving TOWARDS ROCK</span>
+                                    <small>(Negative Attribution)</small>
+                                </div>
+                                <div class="attr-list" id="list-rock-drivers">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+
+        <!-- BATCH RESULTS MODAL (Triggered on Batch CSV Inference) -->
+        <div class="hud-modal" id="batch-modal" style="display: none;">
+            <div class="modal-backdrop" id="modal-backdrop"></div>
+            <div class="modal-window">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <span class="hud-icon">📋</span>
+                        <h3 class="modal-title">Batch Sonar Signal Classification Report</h3>
+                    </div>
+                    <button type="button" class="modal-close-btn" id="btn-close-modal">&times;</button>
+                </div>
+
+                <div class="modal-body" id="modal-body">
+                    <!-- Summary Stats Bar -->
+                    <div class="batch-summary-cards" id="batch-summary-cards">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Table Preview -->
+                    <div class="batch-table-container">
+                        <table class="hud-table" id="batch-results-table">
+                            <thead>
+                                <tr>
+                                    <th>Signal #</th>
+                                    <th>Threat Probability</th>
+                                    <th>Benign Probability</th>
+                                    <th>Classification</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="batch-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="btn-modal-dismiss">Close Report</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="hud-footer">
+            <div class="footer-left">
+                <span>Academic Project: SONAR Signal Classification System</span>
+                <span class="footer-divider">|</span>
+                <span>Day 9: Interactive Web Application &amp; REST API</span>
+            </div>
+            <div class="footer-right">
+                <span>UCI Sonar Dataset</span>
+                <span class="footer-divider">|</span>
+                <span>Calibrated Safe Operating Point: &tau;* = 0.43 (0 Missed Mines)</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Application Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
