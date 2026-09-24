@@ -192,7 +192,8 @@ def index():
     """Renders the main Tactical Sonar Defense Dashboard."""
     pred = get_predictor()
     metadata = {
-        "model_name": "Tuned Support Vector Classifier (RBF Kernel)",
+        "model_name": pred.get_active_model_info()["name"],
+        "model_badge": pred.get_active_model_info()["badge"],
         "safe_threshold": pred.safe_threshold,
         "default_threshold": 0.50,
         "test_accuracy": "92.86%",
@@ -209,7 +210,9 @@ def health():
     return jsonify({
         "status": "operational",
         "service": "Sonar Acoustic Signal Classification System",
-        "day_milestone": "Day 9 - Interactive Web Dashboard & REST API",
+        "day_milestone": "Day 10 - Deep Learning Neural Networks & Stacking Ensembles",
+        "active_model": pred.get_active_model_info(),
+        "available_models": pred.get_available_models(),
         "model": {
             "type": pred.model.__class__.__name__,
             "champion_model_file": os.path.basename(pred.model_path),
@@ -219,6 +222,17 @@ def health():
         },
         "features_expected": 60,
         "server_time": time.strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+
+@app.route("/api/models", methods=["GET"])
+def list_models():
+    """Returns catalog of all available model architectures."""
+    pred = get_predictor()
+    return jsonify({
+        "status": "success",
+        "active_model": pred.get_active_model_info(),
+        "models": pred.get_available_models()
     })
 
 
@@ -240,7 +254,8 @@ def predict_single():
     JSON Request Body:
     {
         "features": [float, float, ... (60 values)],
-        "threshold": optional float in [0.01, 0.99]
+        "threshold": optional float in [0.01, 0.99],
+        "model": optional string model filename or id
     }
     """
     data = request.get_json(force=True, silent=True)
@@ -258,6 +273,16 @@ def predict_single():
         features_floats = [float(x) for x in raw_features]
     except (ValueError, TypeError) as e:
         return jsonify({"status": "error", "message": f"All feature values must be numeric: {e}"}), 400
+
+    # Optional model switch
+    pred = get_predictor()
+    model_choice = data.get("model")
+    if model_choice:
+        try:
+            pred.switch_model(model_choice)
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Failed to switch model to '{model_choice}': {e}"}), 400
+
 
     # Extract optional threshold
     threshold_param = data.get("threshold", None)

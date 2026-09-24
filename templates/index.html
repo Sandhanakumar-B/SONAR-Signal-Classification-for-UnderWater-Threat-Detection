@@ -157,7 +157,34 @@
                     </div>
                 </div>
 
-                <!-- CARD 2: OPERATIONAL DECISION THRESHOLD CONTROLS -->
+                <!-- CARD 2: MODEL ARCHITECTURE SELECTOR (DAY 10) -->
+                <div class="hud-card" id="card-architecture-selector">
+                    <div class="card-header">
+                        <div class="card-title-wrap">
+                            <span class="hud-icon">🧠</span>
+                            <h2 class="card-title">Model Architecture Engine</h2>
+                        </div>
+                        <span class="card-badge" id="active-model-badge">Day 10 Multi-Model</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="model-select-wrapper">
+                            <label for="model-architecture-select" class="input-label">Active Naval Classification Engine:</label>
+                            <select id="model-architecture-select" class="hud-select">
+                                <option value="best_tuned_model.joblib" selected>⚡ Tuned SVM (Champion Baseline - 92.9% Acc)</option>
+                                <option value="mlp_neural_network.joblib">🧠 Deep Neural Network (MLP: 64-32 Dense)</option>
+                                <option value="stacking_ensemble.joblib">🛡️ Stacking Meta-Classifier (Hierarchical Ensemble)</option>
+                                <option value="voting_ensemble.joblib">🗳️ Calibrated Soft-Voting Ensemble</option>
+                                <option value="tuned_random_forest.joblib">🌲 Tuned Random Forest (Bagging Trees)</option>
+                            </select>
+                        </div>
+                        <div class="model-meta-info" id="model-meta-info">
+                            <div class="model-meta-family"><strong id="model-meta-name">Tuned SVM (Champion Baseline)</strong> &bull; <span id="model-meta-family" class="text-accent">Support Vector Machine</span></div>
+                            <div class="model-meta-desc" id="model-meta-desc">RBF kernel maximum-margin classifier with 92.9% accuracy and 100% recall under cost-safe threshold (0.43).</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: OPERATIONAL DECISION THRESHOLD CONTROLS -->
                 <div class="hud-card" id="card-threshold-controls">
                     <div class="card-header">
                         <div class="card-title-wrap">

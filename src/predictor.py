@@ -23,18 +23,68 @@ RESULTS_DIR = os.path.join(BASE_DIR, "results")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 PROCESSED_DATA_DIR = os.path.join(DATA_DIR, "processed")
 
+# Day 10 Comprehensive Multi-Model Architecture Catalog
+MODEL_CATALOG = {
+    "best_tuned_model.joblib": {
+        "id": "best_tuned_model",
+        "filename": "best_tuned_model.joblib",
+        "name": "Tuned SVM (Champion Baseline)",
+        "family": "Support Vector Machine",
+        "description": "RBF kernel maximum-margin classifier with 92.9% accuracy and 100% recall under cost-safe threshold (0.43).",
+        "badge": "Champion",
+        "icon": "⚡"
+    },
+    "mlp_neural_network.joblib": {
+        "id": "mlp_neural_network",
+        "filename": "mlp_neural_network.joblib",
+        "name": "Deep Neural Network (MLP)",
+        "family": "Feed-Forward Deep Neural Network",
+        "description": "2-layer dense neural network (64 -> 32) with ReLU activation, Adam optimizer, and adaptive learning rate.",
+        "badge": "Deep Learning",
+        "icon": "🧠"
+    },
+    "stacking_ensemble.joblib": {
+        "id": "stacking_ensemble",
+        "filename": "stacking_ensemble.joblib",
+        "name": "Stacking Meta-Classifier",
+        "family": "Hierarchical Stacking Ensemble",
+        "description": "2-tier architecture blending SVM, Random Forest, and MLP base learners via a calibrated Logistic Regression meta-learner.",
+        "badge": "Meta-Learner",
+        "icon": "🛡️"
+    },
+    "voting_ensemble.joblib": {
+        "id": "voting_ensemble",
+        "filename": "voting_ensemble.joblib",
+        "name": "Calibrated Soft-Voting Ensemble",
+        "family": "Ensemble Voting Classifier",
+        "description": "Probability-weighted soft voting across SVM, Random Forest, MLP, and Logistic Regression.",
+        "badge": "Ensemble",
+        "icon": "🗳️"
+    },
+    "tuned_random_forest.joblib": {
+        "id": "tuned_random_forest",
+        "filename": "tuned_random_forest.joblib",
+        "name": "Tuned Random Forest",
+        "family": "Decision Tree Bagging",
+        "description": "Bagged ensemble of decision trees with entropy criterion and sub-sampling.",
+        "badge": "Tree Ensemble",
+        "icon": "🌲"
+    }
+}
+
 
 class SonarThreatPredictor:
     """
     Real-time inference engine for predicting underwater threats (Mines) vs benign rocks
-    using pre-trained, tuned classification models and safe decision thresholds.
+    using pre-trained, tuned classification models, neural networks, ensembles, and safe decision thresholds.
     """
 
     def __init__(self, model_name="best_tuned_model.joblib", scaler_name="scaler.joblib"):
         """
         Initializes the predictor by loading the trained scaler, tuned model, and diagnostic thresholds.
         """
-        self.model_path = os.path.join(MODELS_DIR, model_name)
+        self.model_filename = model_name if model_name.endswith(".joblib") else f"{model_name}.joblib"
+        self.model_path = os.path.join(MODELS_DIR, self.model_filename)
         self.scaler_path = os.path.join(MODELS_DIR, scaler_name)
         self.diagnostics_path = os.path.join(RESULTS_DIR, "tuning_and_diagnostics.json")
 
@@ -47,7 +97,7 @@ class SonarThreatPredictor:
     def _load_artifacts(self):
         """Loads serialized model, scaler, and optimized thresholds from disk."""
         if not os.path.exists(self.model_path):
-            raise FileNotFoundError(f"Model file not found at {self.model_path}. Did you run train.py and tune.py?")
+            raise FileNotFoundError(f"Model file not found at {self.model_path}. Did you run train.py, tune.py, or ensemble.py?")
         if not os.path.exists(self.scaler_path):
             raise FileNotFoundError(f"Scaler file not found at {self.scaler_path}. Did you run preprocess.py?")
         
@@ -62,9 +112,48 @@ class SonarThreatPredictor:
                     # Extract the safe high-recall threshold (default 0.43 from Day 6)
                     self.safe_threshold = diagnostics.get("operating_points", {}).get("high_recall_safe", {}).get("threshold", 0.50)
             else:
-                print(f"[WARN] Diagnostics JSON not found at {self.diagnostics_path}. Using default 0.50 threshold.")
+                self.safe_threshold = 0.43
         except Exception as e:
-            print(f"[WARN] Could not parse threshold from diagnostics: {e}. Using 0.50.")
+            print(f"[WARN] Could not parse threshold from diagnostics: {e}. Using 0.43.")
+            self.safe_threshold = 0.43
+
+    def switch_model(self, model_identifier):
+        """
+        Dynamically switches the active inference model (e.g., 'mlp_neural_network', 'stacking_ensemble').
+        """
+        filename = model_identifier if model_identifier.endswith(".joblib") else f"{model_identifier}.joblib"
+        target_path = os.path.join(MODELS_DIR, filename)
+        if not os.path.exists(target_path):
+            raise FileNotFoundError(f"Model file not found: {target_path}")
+
+        self.model = joblib.load(target_path)
+        self.model_filename = filename
+        self.model_path = target_path
+        return self.get_active_model_info()
+
+    def get_active_model_info(self):
+        """Returns metadata about currently loaded model."""
+        info = MODEL_CATALOG.get(self.model_filename, {
+            "id": self.model_filename.replace(".joblib", ""),
+            "filename": self.model_filename,
+            "name": self.model_filename.replace(".joblib", "").replace("_", " ").title(),
+            "family": "Custom Classifier",
+            "description": "User-trained model artifact.",
+            "badge": "Active",
+            "icon": "🎯"
+        })
+        return info
+
+    @classmethod
+    def get_available_models(cls):
+        """Returns catalog of all registered models present in the models/ directory."""
+        available = []
+        for filename, meta in MODEL_CATALOG.items():
+            path = os.path.join(MODELS_DIR, filename)
+            meta_copy = dict(meta)
+            meta_copy["is_installed"] = os.path.exists(path)
+            available.append(meta_copy)
+        return available
 
     def preprocess_input(self, features):
         """
@@ -154,7 +243,8 @@ class SonarThreatPredictor:
             "probability_rock": float(1.0 - prob_mine),
             "applied_threshold": float(applied_threshold),
             "confidence_percent": float(confidence),
-            "latency_ms": float(latency_ms)
+            "latency_ms": float(latency_ms),
+            "model_name": self.get_active_model_info()["name"]
         }
         return result
 

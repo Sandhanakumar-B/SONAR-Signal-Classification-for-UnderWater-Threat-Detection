@@ -39,10 +39,11 @@ sonar-threat-detection/
 │   ├── preprocessor.py            # Day 4 preprocessing, feature scaling & splitting pipeline
 │   ├── model_trainer.py           # Day 5 model training, cross-validation & evaluation module
 │   ├── tuner.py                   # Day 6 hyperparameter tuning, threshold optimization & diagnostics
-│   ├── predictor.py               # Day 7 real-time inference and prediction engine (updated Day 9)
-│   └── explainer.py               # Day 8 model explainability, SHAP & error analysis module
+│   ├── predictor.py               # Day 7 real-time inference and prediction engine (updated Day 9/10)
+│   ├── explainer.py               # Day 8 model explainability, SHAP & error analysis module
+│   └── ensemble.py                # Day 10 Deep Learning (MLP) & Stacking/Voting Ensemble module
 ├── templates/                     # Day 9 Flask HTML templates
-│   └── index.html                 # Tactical Sonar Defense Dashboard (dark HUD UI)
+│   └── index.html                 # Tactical Sonar Defense Dashboard (dark HUD UI with model selector)
 ├── static/                        # Day 9 web static assets
 │   ├── css/
 │   │   └── style.css              # Naval dark theme design system (glassmorphism, animations)
@@ -60,7 +61,10 @@ sonar-threat-detection/
 │   ├── tuned_random_forest.joblib # Day 6 Tuned Random Forest model
 │   ├── tuned_knn.joblib           # Day 6 Tuned KNN model
 │   ├── tuned_logistic_regression.joblib # Day 6 Tuned Logistic Regression model
-│   └── best_tuned_model.joblib    # Day 6 Champion Tuned Model (SVM with 92.86% Acc, 100% Threat Recall)
+│   ├── best_tuned_model.joblib    # Day 6 Champion Tuned Model (SVM with 92.86% Acc, 100% Threat Recall)
+│   ├── mlp_neural_network.joblib  # Day 10 Deep Multi-Layer Perceptron (64-32 Dense) Neural Network
+│   ├── voting_ensemble.joblib     # Day 10 Calibrated Soft-Voting Ensemble (SVM, RF, MLP, LR)
+│   └── stacking_ensemble.joblib   # Day 10 2-Tier Stacking Meta-Classifier (Meta: Logistic Regression)
 ├── results/                       # Evaluation metrics, confusion matrices, and saved plots
 │   ├── class_distribution.png     # Class distribution bar chart (Mines vs Rocks)
 │   ├── mean_spectral_signature.png# Mean energy spectral profile across 60 frequency bands
@@ -85,7 +89,13 @@ sonar-threat-detection/
 │   ├── shap_beeswarm.png          # Day 8 SHAP beeswarm directional impact plot
 │   ├── misclassification_analysis.png # Day 8 error spectral curves & safety margins
 │   ├── local_prediction_waterfall.png # Day 8 local instance explanations (Mine vs Rock)
-│   └── explainability_report.json # Day 8 structured explainability & error audit report
+│   ├── explainability_report.json # Day 8 structured explainability & error audit report
+│   ├── neural_loss_curve.png      # Day 10 MLP Neural Network training loss trajectory
+│   ├── ensemble_comparison.png    # Day 10 Multi-paradigm performance benchmark bar chart
+│   ├── ensemble_confusion_matrices.png # Day 10 2x2 confusion matrix grid for Day 10 models
+│   ├── ensemble_roc_curves.png    # Day 10 Multi-model ROC curves & AUC comparison
+│   ├── ensemble_metrics.csv       # Day 10 Comparative metrics spreadsheet
+│   └── ensemble_evaluation_report.json # Day 10 Structured benchmark report
 ├── .gitignore                     # Files and folders to exclude from version control
 ├── README.md                      # Project documentation and daily tracking
 ├── requirements.txt               # Project dependencies and libraries (Flask added Day 9)
@@ -97,7 +107,9 @@ sonar-threat-detection/
 ├── tune.py                        # Day 6 hyperparameter tuning and diagnostics execution script
 ├── predict.py                     # Day 7 real-time inference and interactive prediction script
 ├── explain.py                     # Day 8 model explainability and SHAP analysis execution script
-└── app.py                         # Day 9 Flask web application server & REST API entry point
+├── app.py                         # Day 9/10 Flask web server, tactical HUD & REST API entry point
+├── ensemble.py                    # Day 10 Deep Learning & Stacking/Voting Ensemble runner
+└── verify_system.py               # Day 10 Automated End-to-End Pipeline Verification Suite
 ```
 
 ---
@@ -258,8 +270,9 @@ Then open your browser at: **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/health` | System status, model version, and loaded artifact diagnostics |
+| `GET` | `/api/models` | List all available model architectures (SVM, MLP, Stacking, Voting) |
 | `GET` | `/api/samples` | Pre-configured curated test samples and reference spectral profiles |
-| `POST` | `/api/predict` | Single 60-band signal classification with optional custom threshold |
+| `POST` | `/api/predict` | Single 60-band signal classification with optional model & custom threshold |
 | `POST` | `/api/explain` | On-demand SHAP local attribution for a given 60-band signal |
 | `POST` | `/api/predict_batch` | Multi-signal batch inference from CSV file upload or JSON array |
 
@@ -268,11 +281,54 @@ Then open your browser at: **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
 # Health check
 curl http://127.0.0.1:5000/api/health
 
-# Classify a signal (replace [...] with 60 float values)
+# List available model architectures
+curl http://127.0.0.1:5000/api/models
+
+# Classify a signal using the Deep Neural Network (MLP)
 curl -X POST http://127.0.0.1:5000/api/predict \
      -H "Content-Type: application/json" \
-     -d '{"features": [0.028, 0.060, ...], "threshold": 0.43}'
+     -d '{"features": [0.028, 0.060, ...], "threshold": 0.43, "model": "mlp_neural_network"}'
 ```
+
+---
+
+### 13. Deep Learning Neural Networks & Advanced Ensemble Architectures (Day 10)
+Execute the Day 10 pipeline to construct, train, benchmark, and serialize the Deep Neural Network (MLP) and Advanced Stacking/Voting Ensembles:
+```bash
+python ensemble.py
+```
+
+#### 🔬 Architectural Implementations:
+1. **Deep Multi-Layer Perceptron (MLP) Neural Network (`models/mlp_neural_network.joblib`):**
+   - Dense feed-forward architecture designed for 60 continuous acoustic frequency channels:
+     $$\text{Input}(60) \longrightarrow \text{Dense}(64, \text{ReLU}) \longrightarrow \text{Dense}(32, \text{ReLU}) \longrightarrow \text{Output}(1, \text{Sigmoid})$$
+   - Optimized using Adam optimizer with adaptive learning rates, $L_2$ weight decay ($\alpha = 0.01$), and backpropagation cross-entropy loss tracking.
+   - Smooth loss convergence in 80 epochs with final loss $0.0060$ (`results/neural_loss_curve.png`).
+2. **Calibrated Soft-Voting Ensemble (`models/voting_ensemble.joblib`):**
+   - Blends class posterior probabilities across 4 distinct mathematical algorithmic families:
+     - Tuned SVM (RBF margin boundary, weight 2)
+     - Tuned Random Forest (non-linear bagged tree partitions, weight 1)
+     - Deep Neural Network (distributed continuous representations, weight 1)
+     - Tuned Logistic Regression (linear probability baseline, weight 1)
+3. **2-Tier Stacking Meta-Classifier (`models/stacking_ensemble.joblib`):**
+   - **Tier 1 (Base Learners):** Tuned SVM + Tuned Random Forest + Deep Neural Network (MLP).
+   - **Tier 2 (Meta-Learner):** Calibrated Logistic Regression trained on 5-Fold Stratified out-of-fold meta-prediction probabilities.
+
+#### 📊 Multi-Paradigm Performance Benchmark (Unseen Test Set):
+| Model Architecture | Paradigm | Test Accuracy | Threat Recall | F1-Score | FN ($\tau = 0.50$) | FN ($\tau^* = 0.43$) |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Tuned SVM (Champion Baseline)** | Margin Kernel | **88.10%** | **90.91%** | **0.8889** | 2 | **0 (Zero Missed)** |
+| **Tuned Random Forest** | Bagged Trees | 85.71% | 95.45% | 0.8750 | 1 | 1 |
+| **Deep Neural Network (MLP)** | Deep Learning | **90.48%** | **90.91%** | **0.9091** | 2 | 1 |
+| **Calibrated Soft-Voting** | Ensemble Voting | **90.48%** | **90.91%** | **0.9091** | 2 | 1 |
+| **Stacking Meta-Classifier** | Stacking Meta | **90.48%** | **90.91%** | **0.9091** | 2 | 1 |
+
+#### 🧪 Full System Automated Verification Suite (Day 10)
+Run the automated end-to-end verification suite testing all 10 stages:
+```bash
+python verify_system.py
+```
+Validates raw data schema, leakage-free scaling, all 13 trained models, dynamic inference switching, zero-false-negative naval safety audit, SHAP explainability, Flask REST endpoints, and all 19 publication visual artifacts.
 
 ---
 
@@ -289,6 +345,8 @@ curl -X POST http://127.0.0.1:5000/api/predict \
 | **Day 7** | Real-Time Sonar Signal Inference & Interactive Prediction System | Completed ✅ |
 | **Day 8** | Model Explainability, SHAP Feature Attribution & Error Profile Analysis | Completed ✅ |
 | **Day 9** | Interactive Web Application, Tactical Defense Dashboard & Production REST API | Completed ✅ |
+| **Day 10** | Deep Learning (Neural Networks - MLP), Advanced Ensemble Learning (Stacking & Soft-Voting) & Full System Verification Suite | Completed ✅ |
+
 
 ---
 

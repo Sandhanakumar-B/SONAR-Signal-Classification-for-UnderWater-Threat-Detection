@@ -17,6 +17,8 @@ const State = {
     showMineRef: true,
     showRockRef: true,
     showActive: true,
+    selectedModel: "best_tuned_model.joblib", // Day 10 Active Model Architecture
+    modelsCatalog: [],        // Available model architectures from /api/models
 };
 
 // ─── DOM REFERENCES ────────────────────────────────────────────────────────────
@@ -50,6 +52,14 @@ const DOM = {
     btnTauSafe: document.getElementById("btn-tau-safe"),
     btnTauDefault: document.getElementById("btn-tau-default"),
     btnTauPrecision: document.getElementById("btn-tau-precision"),
+
+    // Day 10 Model Architecture
+    modelSelect: document.getElementById("model-architecture-select"),
+    modelBadge: document.getElementById("active-model-badge"),
+    modelMetaName: document.getElementById("model-meta-name"),
+    modelMetaFamily: document.getElementById("model-meta-family"),
+    modelMetaDesc: document.getElementById("model-meta-desc"),
+    statModelName: document.getElementById("stat-model-name"),
 
     // Primary classify button
     btnClassify: document.getElementById("btn-classify-signal"),
@@ -106,6 +116,16 @@ async function init() {
         }
     } catch (e) {
         console.warn("Could not load curated samples:", e);
+    }
+
+    try {
+        const respModels = await fetch("/api/models");
+        const dataModels = await respModels.json();
+        if (dataModels.status === "success" && dataModels.models) {
+            State.modelsCatalog = dataModels.models;
+        }
+    } catch (e) {
+        console.warn("Could not load models catalog:", e);
     }
 
     // Load confident mine as default signal on page load
@@ -215,7 +235,7 @@ async function classifyCurrentSignal() {
         const resp = await fetch("/api/predict", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ features, threshold: State.threshold }),
+            body: JSON.stringify({ features, threshold: State.threshold, model: State.selectedModel }),
         });
 
         const json = await resp.json();
@@ -650,6 +670,27 @@ function flashHint(msg, type = "info") {
 
 // ─── EVENT LISTENERS ──────────────────────────────────────────────────────────
 function attachEventListeners() {
+    // Day 10: Model architecture selection
+    if (DOM.modelSelect) {
+        DOM.modelSelect.addEventListener("change", (e) => {
+            State.selectedModel = e.target.value;
+            const modelMeta = State.modelsCatalog.find(m => m.filename === State.selectedModel);
+            if (modelMeta) {
+                if (DOM.modelMetaName) DOM.modelMetaName.textContent = modelMeta.name;
+                if (DOM.modelMetaFamily) DOM.modelMetaFamily.textContent = modelMeta.family;
+                if (DOM.modelMetaDesc) DOM.modelMetaDesc.textContent = modelMeta.description;
+                if (DOM.statModelName) DOM.statModelName.textContent = modelMeta.name;
+                if (DOM.modelBadge) DOM.modelBadge.textContent = modelMeta.badge;
+            } else {
+                if (DOM.statModelName) DOM.statModelName.textContent = e.target.selectedOptions[0].text;
+            }
+            flashHint(`Switched active inference model to: ${e.target.selectedOptions[0].text}`);
+            if (State.features) {
+                classifyCurrentSignal();
+            }
+        });
+    }
+
     // Tab switching
     DOM.tabBtns.forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
 

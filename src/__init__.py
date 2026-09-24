@@ -54,6 +54,10 @@ from .explainer import (
     save_explainability_artifacts,
     run_full_explainability,
 )
+from .ensemble import (
+    SonarEnsemblePipeline,
+    run_full_ensemble_pipeline,
+)
 
 __all__ = [
     "load_sonar_data",
@@ -98,6 +102,9 @@ __all__ = [
     "render_and_save_explainability_plots",
     "save_explainability_artifacts",
     "run_full_explainability",
+    "SonarEnsemblePipeline",
+    "run_full_ensemble_pipeline",
 ]
+
 
 
