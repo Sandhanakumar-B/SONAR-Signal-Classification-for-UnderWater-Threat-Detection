@@ -1,0 +1,35 @@
+# =============================================================================
+# SONAR Signal Classification System — Docker Compose
+# Underwater Threat Detection: Tactical Defense Dashboard & REST API
+# =============================================================================
+
+version: '3.8'
+
+services:
+  sonar-defense-system:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sonar-defense-system:latest
+    container_name: sonar-threat-detector
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M

@@ -88,12 +88,17 @@ def main():
     if dir_ok and dep_ok and py_ok:
         print("   STATUS: SUCCESS! All project structures and libraries are ready.")
         print("   Ready to proceed to Day 2.")
+        print("=" * 65)
+        sys.exit(0)
     elif dir_ok:
         print("   STATUS: DIRECTORIES READY. Please install missing libraries using:")
         print("           pip install -r requirements.txt")
+        print("=" * 65)
+        sys.exit(1)
     else:
         print("   STATUS: PLEASE REVIEW MISSING COMPONENTS ABOVE.")
-    print("=" * 65)
+        print("=" * 65)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

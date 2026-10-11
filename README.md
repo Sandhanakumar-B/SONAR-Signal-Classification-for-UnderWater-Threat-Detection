@@ -96,6 +96,12 @@ sonar-threat-detection/
 │   ├── ensemble_roc_curves.png    # Day 10 Multi-model ROC curves & AUC comparison
 │   ├── ensemble_metrics.csv       # Day 10 Comparative metrics spreadsheet
 │   └── ensemble_evaluation_report.json # Day 10 Structured benchmark report
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml              # GitHub Actions CI/CD Pipeline (Test, Lint, Docker Build & GHCR)
+├── Dockerfile                     # Lightweight Python production container with healthcheck
+├── docker-compose.yml             # Docker Compose orchestration with resource limits
+├── .dockerignore                  # Docker build context exclusion rules
 ├── .gitignore                     # Files and folders to exclude from version control
 ├── README.md                      # Project documentation and daily tracking
 ├── requirements.txt               # Project dependencies and libraries (Flask added Day 9)
@@ -332,6 +338,42 @@ Validates raw data schema, leakage-free scaling, all 13 trained models, dynamic 
 
 ---
 
+### 14. Docker Containerization & GitHub Actions CI/CD Pipeline (Day 11)
+
+Production containerization and automated continuous integration for the Tactical Sonar Threat Detection platform.
+
+#### 🐳 Docker Containerization
+The project includes a hardened, production-ready `Dockerfile` (using `python:3.11-slim`, non-root security principles, and healthcheck probes) and `docker-compose.yml`:
+
+```bash
+# Build the Docker image
+docker build -t sonar-defense-system:latest .
+
+# Run the container
+docker run -p 5000:5000 --name sonar-threat-detector sonar-defense-system:latest
+
+# Or launch via Docker Compose with resource constraints
+docker-compose up -d
+```
+
+Verify container liveness:
+```bash
+curl http://localhost:5000/api/health
+```
+
+#### 🔄 GitHub Actions CI/CD Pipeline
+Continuous integration is managed by [`.github/workflows/ci-cd.yml`](.github/workflows/ci-cd.yml), executing on every push and pull request:
+1. **Pipeline & Model Verification (`test`):**
+   - Matrix testing across Python `3.10` and `3.11`.
+   - Dependency verification (`test_environment.py`).
+   - Automated 9-stage end-to-end system verification suite (`verify_system.py`).
+2. **Docker Container Deployment (`docker`):**
+   - Automated Docker Buildx setup (`docker/setup-buildx-action@v3`) with GitHub Actions cache export/import (`type=gha`).
+   - Container liveness and REST API self-test.
+   - Pushes production images to GitHub Container Registry (`ghcr.io`) upon merges to `main`.
+
+---
+
 ## 📅 Daily Progress Tracker
 
 | Day | Milestone / Task | Status |
@@ -346,6 +388,7 @@ Validates raw data schema, leakage-free scaling, all 13 trained models, dynamic 
 | **Day 8** | Model Explainability, SHAP Feature Attribution & Error Profile Analysis | Completed ✅ |
 | **Day 9** | Interactive Web Application, Tactical Defense Dashboard & Production REST API | Completed ✅ |
 | **Day 10** | Deep Learning (Neural Networks - MLP), Advanced Ensemble Learning (Stacking & Soft-Voting) & Full System Verification Suite | Completed ✅ |
+| **Day 11** | Containerization & DevOps: Production Dockerfile, Docker Compose Orchestration & GitHub Actions CI/CD Pipeline | Completed ✅ |
 
 
 ---

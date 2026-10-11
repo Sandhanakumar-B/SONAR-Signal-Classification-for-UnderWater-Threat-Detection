@@ -455,8 +455,11 @@ def server_error(e):
 
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() in ("true", "1", "t")
+
     print("\n" + "=" * 74)
-    print("   DAY 9: TACTICAL SONAR SIGNAL CLASSIFICATION SYSTEM")
-    print("   Starting Local Web Server on http://127.0.0.1:5000 ...")
+    print("   TACTICAL SONAR SIGNAL CLASSIFICATION SYSTEM - WEB SERVER")
+    print(f"   Starting Web Server on http://0.0.0.0:{port} (Debug: {debug_mode}) ...")
     print("=" * 74)
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
