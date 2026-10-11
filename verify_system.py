@@ -30,6 +30,24 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
 
+def patch_sklearn_compat(model):
+    """Ensures cross-version attribute compatibility for unpickled estimators."""
+    if model is None:
+        return model
+    candidates = [model]
+    if hasattr(model, "estimators_"):
+        candidates.extend(model.estimators_)
+    if hasattr(model, "named_estimators_"):
+        candidates.extend(list(model.named_estimators_.values()))
+    if hasattr(model, "final_estimator_"):
+        candidates.append(model.final_estimator_)
+    for est in candidates:
+        if hasattr(est, "__class__") and est.__class__.__name__ == "LogisticRegression":
+            if not hasattr(est, "multi_class"):
+                est.multi_class = "auto"
+    return model
+
+
 def run_verification():
     passed_tests = 0
     total_tests = 9
@@ -92,7 +110,7 @@ def run_verification():
     for m in required_models:
         mp = os.path.join(MODELS_DIR, m)
         assert os.path.exists(mp), f"Model missing: {m}"
-        mod = joblib.load(mp)
+        mod = patch_sklearn_compat(joblib.load(mp))
         assert hasattr(mod, "predict"), f"Object {m} has no predict method"
     print(f"    [PASS] All 10 baseline and tuned models loaded and validated successfully.")
     passed_tests += 1
@@ -109,7 +127,7 @@ def run_verification():
     for filename, display_name in day10_models:
         mp = os.path.join(MODELS_DIR, filename)
         assert os.path.exists(mp), f"Day 10 model missing: {filename}"
-        mod = joblib.load(mp)
+        mod = patch_sklearn_compat(joblib.load(mp))
         assert hasattr(mod, "predict_proba"), f"{display_name} has no predict_proba method"
         probs = mod.predict_proba(X_test)
         assert probs.shape == (42, 2), f"Unexpected probability shape: {probs.shape}"

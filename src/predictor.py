@@ -102,7 +102,26 @@ class SonarThreatPredictor:
             raise FileNotFoundError(f"Scaler file not found at {self.scaler_path}. Did you run preprocess.py?")
         
         self.model = joblib.load(self.model_path)
+        self._patch_sklearn_compat(self.model)
         self.scaler = joblib.load(self.scaler_path)
+
+    @staticmethod
+    def _patch_sklearn_compat(model):
+        """Ensures cross-version attribute compatibility for unpickled estimators."""
+        if model is None:
+            return model
+        candidates = [model]
+        if hasattr(model, "estimators_"):
+            candidates.extend(model.estimators_)
+        if hasattr(model, "named_estimators_"):
+            candidates.extend(list(model.named_estimators_.values()))
+        if hasattr(model, "final_estimator_"):
+            candidates.append(model.final_estimator_)
+        for est in candidates:
+            if hasattr(est, "__class__") and est.__class__.__name__ == "LogisticRegression":
+                if not hasattr(est, "multi_class"):
+                    est.multi_class = "auto"
+        return model
 
         # Attempt to load cost-safe optimized threshold from Day 6 diagnostics
         try:
@@ -127,6 +146,7 @@ class SonarThreatPredictor:
             raise FileNotFoundError(f"Model file not found: {target_path}")
 
         self.model = joblib.load(target_path)
+        self._patch_sklearn_compat(self.model)
         self.model_filename = filename
         self.model_path = target_path
         return self.get_active_model_info()
